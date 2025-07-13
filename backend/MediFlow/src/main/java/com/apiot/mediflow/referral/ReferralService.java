@@ -25,6 +25,12 @@ public class ReferralService {
         return mapReferralToReferralDto(referral);
      }
 
+     public ReferralDto createReferral(ReferralDto referralDto) {
+        Referral referral = mapReferralDtoToReferral(referralDto);
+        Referral savedReferral = referralRepository.save(referral);
+        return mapReferralToReferralDto(savedReferral);
+     }
+
     private ReferralDto mapReferralToReferralDto(Referral referral) {
        ReferralDto referralDto = new ReferralDto();
        referralDto.setId(referral.getId());
@@ -32,6 +38,15 @@ public class ReferralService {
        referralDto.setReferral_number(referral.getReferral_number());
        referralDto.setCreationDate(referral.getCreationDate());
        return referralDto;
+    }
+
+    private Referral mapReferralDtoToReferral(ReferralDto referralDto) {
+        Referral referral = new Referral();
+        referral.setId(referralDto.getId());
+        referral.setReferrer(referralDto.getReferrer());
+        referral.setReferral_number(referralDto.getReferral_number());
+        referral.setCreationDate(referralDto.getCreationDate());
+        return referral;
     }
 
 }

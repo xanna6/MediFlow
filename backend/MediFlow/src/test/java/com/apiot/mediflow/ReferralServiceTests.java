@@ -78,4 +78,21 @@ public class ReferralServiceTests {
         // when + then
         assertThrows(EntityNotFoundException.class, () -> referralService.getReferralById(123L));
     }
+
+    @Test
+    void shouldCreateReferral() {
+        // given
+        ReferralDto referralDto = new ReferralDto(null, "Jan Kowalski", "A25000003", null);
+        Referral savedReferral = new Referral(1L, "Jan Kowalski", "A25000003", LocalDateTime.now());
+        when(referralRepository.save(any(Referral.class))).thenReturn(savedReferral);
+
+        // when
+        ReferralDto result = referralService.createReferral(referralDto);
+
+        // then
+        assertNotNull(result.getId());
+        assertEquals(savedReferral.getReferrer(), result.getReferrer());
+        assertEquals(savedReferral.getReferral_number(), result.getReferral_number());
+        verify(referralRepository, times(1)).save(any(Referral.class));
+    }
 }
