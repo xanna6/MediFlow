@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JSR310Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -50,13 +51,43 @@ public class ReferralControllerTests {
 
     @Test
     void shouldReturnEmptyJsonArray() throws Exception {
+        // given
         when(referralService.getAllReferrals()).thenReturn(Collections.emptyList());
 
         String expectedJson = "[]";
 
+        // when + then
         mockMvc.perform(get("/api/referrals"))
                 .andExpect(status().isOk())
                 .andExpect(content().json(expectedJson));
+    }
+
+    @Test
+    void shouldReturnReferralDtoById() throws Exception {
+        //given
+        ReferralDto referralDto = new ReferralDto(1L, "Jan Kowalski", "A25000001", LocalDateTime.now());
+        when(referralService.getReferralById(1L)).thenReturn(referralDto);
+
+        String expectedJson = new ObjectMapper().registerModule(new JavaTimeModule())
+                .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS).writeValueAsString(referralDto);
+
+        //when + then
+        mockMvc.perform(get("/api/referrals/1"))
+                .andExpect(status().isOk())
+                .andExpect(content().json(expectedJson));
+    }
+
+    @Test
+    void shouldReturn404WhenProductNotFound() throws Exception {
+        // given
+        Long nonExistingId = 999L;
+        when(referralService.getReferralById(nonExistingId))
+                .thenThrow(new EntityNotFoundException("Referral with id 999 not found"));
+
+        // when + then
+        mockMvc.perform(get("/api/referrals/{id}", nonExistingId))
+                .andExpect(status().isNotFound())
+                .andExpect(content().string("Referral with id 999 not found"));
     }
 
 }

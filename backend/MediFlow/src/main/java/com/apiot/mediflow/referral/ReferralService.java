@@ -1,5 +1,6 @@
 package com.apiot.mediflow.referral;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +19,11 @@ public class ReferralService {
                 .map(this::mapReferralToReferralDto)
                 .collect(Collectors.toList());
     }
+     public ReferralDto getReferralById(long id) {
+        Referral referral = referralRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Referral with id " + id + " not found"));
+        return mapReferralToReferralDto(referral);
+     }
 
     private ReferralDto mapReferralToReferralDto(Referral referral) {
        ReferralDto referralDto = new ReferralDto();

@@ -4,14 +4,15 @@ import com.apiot.mediflow.referral.Referral;
 import com.apiot.mediflow.referral.ReferralDto;
 import com.apiot.mediflow.referral.ReferralRepository;
 import com.apiot.mediflow.referral.ReferralService;
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.times;
 
@@ -48,5 +49,33 @@ public class ReferralServiceTests {
         assertEquals("A25000002", result.get(1).getReferral_number());
 
         verify(referralRepository, times(1)).findAll();
+    }
+
+    @Test
+    void shouldReturnReferralById() {
+        // given
+        Referral referral = new Referral(1L, "Jan Kowalski", "A25000001", LocalDateTime.now());
+
+        when(referralRepository.findById(1L)).thenReturn(Optional.of(referral));
+
+        // when
+        ReferralDto result = referralService.getReferralById(1L);
+
+        // then
+        assertNotNull(result);
+        assertEquals(1, result.getId());
+        assertEquals("Jan Kowalski", result.getReferrer());
+        assertEquals("A25000001", result.getReferral_number());
+
+        verify(referralRepository, times(1)).findById(1L);
+    }
+
+    @Test
+    void shouldThrowExceptionWhenReferralNotFound() {
+        // given
+        when(referralRepository.findById(123L)).thenReturn(Optional.empty());
+
+        // when + then
+        assertThrows(EntityNotFoundException.class, () -> referralService.getReferralById(123L));
     }
 }
