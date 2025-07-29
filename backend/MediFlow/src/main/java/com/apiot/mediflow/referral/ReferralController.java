@@ -25,8 +25,8 @@ public class ReferralController {
     }
 
     @PostMapping
-    public ResponseEntity<ReferralDto> createRefferal(@RequestBody ReferralDto referralDto) {
-        ReferralDto created = referralService.createReferral(referralDto);
+    public ResponseEntity<ReferralDto> createRefferal(@RequestBody ReferralCreateDto referralCreateDto) {
+        ReferralDto created = referralService.createReferral(referralCreateDto);
         return ResponseEntity
                 .created(URI.create("/api/referrals/" + created.getId()))
                 .body(created);

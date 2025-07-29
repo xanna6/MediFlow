@@ -1,8 +1,10 @@
 package com.apiot.mediflow;
 
 import com.apiot.mediflow.referral.ReferralController;
+import com.apiot.mediflow.referral.ReferralCreateDto;
 import com.apiot.mediflow.referral.ReferralDto;
 import com.apiot.mediflow.referral.ReferralService;
+import com.apiot.mediflow.test.MedicalTestDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -17,6 +19,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -36,9 +39,11 @@ public class ReferralControllerTests {
     @Test
     void shouldReturnListOfReferralsAsJson() throws Exception {
         // given
+        Set<MedicalTestDto> medicalTestDtos = Set.of(
+                new MedicalTestDto(1L, "TSH", "Badanie funkcji tarczycy", 45.99F));
         List<ReferralDto> referralDtoList = List.of(
-                new ReferralDto(1L, "Jan Kowalski", "A25000001", LocalDateTime.now()),
-                new ReferralDto(2L, "Jakub Kozłowski", "A25000002", LocalDateTime.now())
+                new ReferralDto(1L, "Jan Kowalski", "A25000001", LocalDateTime.now(), medicalTestDtos),
+                new ReferralDto(2L, "Jakub Kozłowski", "A25000002", LocalDateTime.now(), medicalTestDtos)
         );
         when(referralService.getAllReferrals()).thenReturn(referralDtoList);
 
@@ -67,7 +72,12 @@ public class ReferralControllerTests {
     @Test
     void shouldReturnReferralDtoById() throws Exception {
         //given
-        ReferralDto referralDto = new ReferralDto(1L, "Jan Kowalski", "A25000001", LocalDateTime.now());
+        Set<MedicalTestDto> medicalTestDtos = Set.of(
+                new MedicalTestDto(1L, "TSH", "Badanie funkcji tarczycy", 45.99F),
+                new MedicalTestDto(2L, "Glukoza", "Badanie poziomu glukozy na czczo", 19.99F));
+        ReferralDto referralDto = new ReferralDto(1L, "Jan Kowalski", "A25000001",
+                LocalDateTime.now(), medicalTestDtos);
+
         when(referralService.getReferralById(1L)).thenReturn(referralDto);
 
         String expectedJson = new ObjectMapper().registerModule(new JavaTimeModule())
@@ -95,9 +105,16 @@ public class ReferralControllerTests {
     @Test
     void shouldCreateReferralAndReturn201() throws Exception {
         // given
-        ReferralDto referralDto = new ReferralDto(null, "Jan Kowalski", "A25000003", null);
-        ReferralDto savedReferral = new ReferralDto(5L, "Jan Kowalski", "A25000003", LocalDateTime.now());
-        when(referralService.createReferral(any(ReferralDto.class))).thenReturn(savedReferral);
+        Set<MedicalTestDto> medicalTestDtos = Set.of(
+                new MedicalTestDto(1L, "TSH", "Badanie funkcji tarczycy", 45.99F),
+                new MedicalTestDto(2L, "Glukoza", "Badanie poziomu glukozy na czczo", 19.99F));
+
+        ReferralDto referralDto = new ReferralDto(null, "Jan Kowalski", "A25000003",
+                null, medicalTestDtos);
+        ReferralDto savedReferral = new ReferralDto(5L, "Jan Kowalski", "A25000003",
+                LocalDateTime.now(), medicalTestDtos);
+
+        when(referralService.createReferral(any(ReferralCreateDto.class))).thenReturn(savedReferral);
 
         String expectedJson = new ObjectMapper().registerModule(new JavaTimeModule())
                 .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS).writeValueAsString(savedReferral);

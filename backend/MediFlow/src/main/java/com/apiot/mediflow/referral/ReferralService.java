@@ -1,52 +1,42 @@
 package com.apiot.mediflow.referral;
 
+import com.apiot.mediflow.test.MedicalTest;
+import com.apiot.mediflow.test.MedicalTestRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
+
+import static com.apiot.mediflow.referral.ReferralMapper.*;
 
 @AllArgsConstructor
 @Service
 public class ReferralService {
 
     private final ReferralRepository referralRepository;
+    private final MedicalTestRepository medicalTestRepository;
 
     public List<ReferralDto> getAllReferrals() {
-        return referralRepository.findAll()
+        return referralRepository.findAllWithMedicalTests()
                 .stream()
-                .map(this::mapReferralToReferralDto)
+                .map(ReferralMapper::mapReferralToReferralDto)
                 .collect(Collectors.toList());
     }
      public ReferralDto getReferralById(long id) {
-        Referral referral = referralRepository.findById(id)
+        Referral referral = referralRepository.findByIdWithMedicalTests(id)
                 .orElseThrow(() -> new EntityNotFoundException("Referral with id " + id + " not found"));
         return mapReferralToReferralDto(referral);
      }
 
-     public ReferralDto createReferral(ReferralDto referralDto) {
-        Referral referral = mapReferralDtoToReferral(referralDto);
-        Referral savedReferral = referralRepository.save(referral);
-        return mapReferralToReferralDto(savedReferral);
+     public ReferralDto createReferral(ReferralCreateDto referralCreateDto) {
+         Set<MedicalTest> tests = new HashSet<>(medicalTestRepository
+                 .findAllById(referralCreateDto.getMedicalTestIds()));
+         Referral referral = ReferralMapper.mapReferralCreateDtoToReferral(referralCreateDto, tests);
+         return ReferralMapper.mapReferralToReferralDto(referralRepository.save(referral));
      }
-
-    private ReferralDto mapReferralToReferralDto(Referral referral) {
-       ReferralDto referralDto = new ReferralDto();
-       referralDto.setId(referral.getId());
-       referralDto.setReferrer(referral.getReferrer());
-       referralDto.setReferral_number(referral.getReferral_number());
-       referralDto.setCreationDate(referral.getCreationDate());
-       return referralDto;
-    }
-
-    private Referral mapReferralDtoToReferral(ReferralDto referralDto) {
-        Referral referral = new Referral();
-        referral.setId(referralDto.getId());
-        referral.setReferrer(referralDto.getReferrer());
-        referral.setReferral_number(referralDto.getReferral_number());
-        referral.setCreationDate(referralDto.getCreationDate());
-        return referral;
-    }
 
 }
