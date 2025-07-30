@@ -1,5 +1,6 @@
 package com.apiot.mediflow;
 
+import com.apiot.mediflow.exceptionHandler.GlobalExceptionHandler;
 import com.apiot.mediflow.referral.ReferralController;
 import com.apiot.mediflow.referral.ReferralCreateDto;
 import com.apiot.mediflow.referral.ReferralDto;
@@ -12,6 +13,7 @@ import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -25,9 +27,11 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(ReferralController.class)
+@Import(GlobalExceptionHandler.class)
 public class ReferralControllerTests {
 
     @Autowired
@@ -109,8 +113,7 @@ public class ReferralControllerTests {
                 new MedicalTestDto(1L, "TSH", "Badanie funkcji tarczycy", 45.99F),
                 new MedicalTestDto(2L, "Glukoza", "Badanie poziomu glukozy na czczo", 19.99F));
 
-        ReferralDto referralDto = new ReferralDto(null, "Jan Kowalski", "A25000003",
-                null, medicalTestDtos);
+        ReferralCreateDto referralCreateDto = new ReferralCreateDto("Jan Kowalski", "A25000003", Set.of(1L, 2L));
         ReferralDto savedReferral = new ReferralDto(5L, "Jan Kowalski", "A25000003",
                 LocalDateTime.now(), medicalTestDtos);
 
@@ -123,10 +126,31 @@ public class ReferralControllerTests {
         mockMvc.perform(post("/api/referrals")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().registerModule(new JavaTimeModule())
-                                .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS).writeValueAsString((referralDto))))
+                                .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS).writeValueAsString((referralCreateDto))))
                 .andExpect(status().isCreated())
                 .andExpect(header().string("Location", "/api/referrals/5"))
                 .andExpect(content().json(expectedJson));
+    }
+
+    @Test
+    void shouldReturnBadRequestWhenValidationFails() throws Exception {
+        String invalidRequest = """
+            {
+                "referrer": "",
+                "referralNumber": "",
+                "medicalTestIds": []
+            }
+        """;
+
+        // when + then
+        mockMvc.perform(post("/api/referrals")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(invalidRequest))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.errors").exists())
+                .andExpect(jsonPath("$.errors.referrer").value("must not be blank"))
+                .andExpect(jsonPath("$.errors.referralNumber").value("must not be blank"))
+                .andExpect(jsonPath("$.errors.medicalTestIds").value("must not be empty"));;
     }
 
 }

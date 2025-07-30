@@ -1,5 +1,6 @@
 package com.apiot.mediflow.referral;
 
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,7 +26,7 @@ public class ReferralController {
     }
 
     @PostMapping
-    public ResponseEntity<ReferralDto> createRefferal(@RequestBody ReferralCreateDto referralCreateDto) {
+    public ResponseEntity<ReferralDto> createReferral(@RequestBody @Valid ReferralCreateDto referralCreateDto) {
         ReferralDto created = referralService.createReferral(referralCreateDto);
         return ResponseEntity
                 .created(URI.create("/api/referrals/" + created.getId()))
