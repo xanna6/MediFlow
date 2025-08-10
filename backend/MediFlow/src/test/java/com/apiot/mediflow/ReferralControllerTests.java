@@ -1,5 +1,9 @@
 package com.apiot.mediflow;
 
+import com.apiot.mediflow.auth.UserRepository;
+import com.apiot.mediflow.config.AuthConfig;
+import com.apiot.mediflow.config.JwtAuthenticationFilter;
+import com.apiot.mediflow.config.SecurityConfig;
 import com.apiot.mediflow.exceptionHandler.GlobalExceptionHandler;
 import com.apiot.mediflow.referral.ReferralController;
 import com.apiot.mediflow.referral.ReferralCreateDto;
@@ -10,11 +14,17 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -24,14 +34,15 @@ import java.util.List;
 import java.util.Set;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(ReferralController.class)
-@Import(GlobalExceptionHandler.class)
+@Import({SecurityConfig.class, AuthConfig.class, GlobalExceptionHandler.class})
+@WithMockUser
 public class ReferralControllerTests {
 
     @Autowired
@@ -39,6 +50,24 @@ public class ReferralControllerTests {
 
     @MockitoBean
     private ReferralService referralService;
+
+    @MockitoBean
+    private JwtAuthenticationFilter jwtAuthenticationFilter;
+
+    @MockitoBean
+    private UserRepository userRepository;
+
+    @BeforeEach
+    void setUp() throws Exception {
+        // przepuszczane wszystkie requesty w mocku filtra
+        doAnswer(invocation -> {
+            FilterChain chain = invocation.getArgument(2);
+            HttpServletRequest request = invocation.getArgument(0);
+            HttpServletResponse response = invocation.getArgument(1);
+            chain.doFilter(request, response);
+            return null;
+        }).when(jwtAuthenticationFilter).doFilter(any(), any(), any());
+    }
 
     @Test
     void shouldReturnListOfReferralsAsJson() throws Exception {
