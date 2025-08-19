@@ -5,6 +5,7 @@ import com.apiot.mediflow.config.AuthConfig;
 import com.apiot.mediflow.config.JwtAuthenticationFilter;
 import com.apiot.mediflow.config.SecurityConfig;
 import com.apiot.mediflow.exceptionHandler.GlobalExceptionHandler;
+import com.apiot.mediflow.users.Role;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
@@ -74,6 +75,7 @@ public class AuthenticationControllerTests {
             mockUser.setId(1L);
             mockUser.setUsername("testuser");
             mockUser.setPassword("password");
+            mockUser.setRole(Role.PATIENT);
 
             when(userRepository.findByUsername("testuser"))
                     .thenReturn(Optional.of(mockUser));
