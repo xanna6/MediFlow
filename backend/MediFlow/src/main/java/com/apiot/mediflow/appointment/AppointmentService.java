@@ -31,6 +31,14 @@ public class AppointmentService {
         CollectionPoint collectionPoint = collectionPointRepository.findById(appointmentRequestDto.getCollectionPointId())
                 .orElseThrow(() -> new RuntimeException("Collection point does not exist"));
 
+        if (appointmentRepository.existsByReferral(referral)) {
+            throw new RuntimeException("Referral has already been used");
+        }
+
+        if (appointmentRepository.existsByCollectionPointAndDate(collectionPoint, appointmentRequestDto.getDate())) {
+            throw new RuntimeException("This time slot is already taken at the collection point");
+        }
+
         Appointment appointment = mapAppointmentRequestDtoToAppointment(appointmentRequestDto, referral, collectionPoint);
 
         Appointment savedAppointment = appointmentRepository.save(appointment);
