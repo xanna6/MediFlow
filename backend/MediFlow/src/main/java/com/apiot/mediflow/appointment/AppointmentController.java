@@ -4,6 +4,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -27,5 +28,11 @@ public class AppointmentController {
     @GetMapping
     public ResponseEntity<List<AppointmentResponseDto>> getAppointments() {
         return ResponseEntity.ok(appointmentService.getAppointments());
+    }
+
+    @GetMapping("/day")
+    public ResponseEntity<List<AppointmentResponseDto>> getAppointmentsForDay(@RequestParam("date") String date) {
+        LocalDate localDate = LocalDate.parse(date);
+        return ResponseEntity.ok(appointmentService.getAppointmentsForDay(localDate));
     }
 }

@@ -7,6 +7,8 @@ import com.apiot.mediflow.referral.ReferralRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -49,6 +51,16 @@ public class AppointmentService {
     protected List<AppointmentResponseDto> getAppointments() {
         //TODO: return a list of appointments depending on the user's role
         return appointmentRepository.findAll()
+                .stream()
+                .map(this::mapAppointmentToAppointmentResponseDto)
+                .collect(Collectors.toList());
+    }
+
+    protected List<AppointmentResponseDto> getAppointmentsForDay(LocalDate day) {
+        LocalDateTime startOfDay = day.atStartOfDay();
+        LocalDateTime endOfDay = day.plusDays(1).atStartOfDay();
+
+        return appointmentRepository.findAllByDateBetween(startOfDay, endOfDay)
                 .stream()
                 .map(this::mapAppointmentToAppointmentResponseDto)
                 .collect(Collectors.toList());
