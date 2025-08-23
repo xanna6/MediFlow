@@ -15,10 +15,4 @@ public class AppointmentResponseDto {
     private Long referralId;
     private Long collectionPointId;
 
-    public AppointmentResponseDto(Appointment appointment) {
-        this.id = appointment.getId();
-        this.date = appointment.getDate();
-        this.referralId = appointment.getReferral().getId();
-        this.collectionPointId = appointment.getCollectionPoint().getId();
-    }
 }

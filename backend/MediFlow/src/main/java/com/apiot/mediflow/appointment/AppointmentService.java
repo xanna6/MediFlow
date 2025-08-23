@@ -7,6 +7,9 @@ import com.apiot.mediflow.referral.ReferralRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 public class AppointmentService {
 
@@ -28,14 +31,37 @@ public class AppointmentService {
         CollectionPoint collectionPoint = collectionPointRepository.findById(appointmentRequestDto.getCollectionPointId())
                 .orElseThrow(() -> new RuntimeException("Collection point does not exist"));
 
+        Appointment appointment = mapAppointmentRequestDtoToAppointment(appointmentRequestDto, referral, collectionPoint);
+
+        Appointment savedAppointment = appointmentRepository.save(appointment);
+
+        return mapAppointmentToAppointmentResponseDto(savedAppointment);
+    }
+
+    protected List<AppointmentResponseDto> getAppointments() {
+        //TODO: return a list of appointments depending on the user's role
+        return appointmentRepository.findAll()
+                .stream()
+                .map(this::mapAppointmentToAppointmentResponseDto)
+                .collect(Collectors.toList());
+    }
+
+    private AppointmentResponseDto mapAppointmentToAppointmentResponseDto(Appointment appointment) {
+        AppointmentResponseDto appointmentResponseDto = new AppointmentResponseDto();
+        appointmentResponseDto.setId(appointment.getId());
+        appointmentResponseDto.setDate(appointment.getDate());
+        appointmentResponseDto.setReferralId(appointment.getReferral().getId());
+        appointmentResponseDto.setCollectionPointId(appointment.getCollectionPoint().getId());
+        return appointmentResponseDto;
+    }
+
+    private Appointment mapAppointmentRequestDtoToAppointment(AppointmentRequestDto appointmentRequestDto,
+                                                              Referral referral, CollectionPoint collectionPoint) {
         Appointment appointment = new Appointment();
         appointment.setDate(appointmentRequestDto.getDate());
         appointment.setReferral(referral);
         appointment.setCollectionPoint(collectionPoint);
-
-        Appointment savedAppointment = appointmentRepository.save(appointment);
-
-        return new AppointmentResponseDto(savedAppointment);
+        return appointment;
     }
 
 }
