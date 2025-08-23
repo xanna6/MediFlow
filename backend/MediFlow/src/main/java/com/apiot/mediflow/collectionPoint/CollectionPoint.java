@@ -1,14 +1,13 @@
 package com.apiot.mediflow.collectionPoint;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.apiot.mediflow.appointment.Appointment;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalTime;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -24,4 +23,7 @@ public class CollectionPoint {
     private String postalCode;
     private LocalTime openedFrom;
     private LocalTime openedTo;
+
+    @OneToMany(mappedBy = "collectionPoint")
+    private List<Appointment> appointmentList;
 }
