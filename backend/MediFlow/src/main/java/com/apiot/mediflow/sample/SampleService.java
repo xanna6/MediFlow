@@ -2,6 +2,7 @@ package com.apiot.mediflow.sample;
 
 import com.apiot.mediflow.appointment.Appointment;
 import com.apiot.mediflow.appointment.AppointmentRepository;
+import com.apiot.mediflow.barcodeGenerator.SampleCodeGenerator;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
@@ -13,10 +14,13 @@ public class SampleService {
 
     private final SampleRepository sampleRepository;
     private final AppointmentRepository appointmentRepository;
+    private final SampleCodeGenerator sampleCodeGenerator;
 
-    public SampleService(SampleRepository sampleRepository, AppointmentRepository appointmentRepository) {
+    public SampleService(SampleRepository sampleRepository, AppointmentRepository appointmentRepository,
+                         SampleCodeGenerator sampleCodeGenerator) {
         this.sampleRepository = sampleRepository;
         this.appointmentRepository = appointmentRepository;
+        this.sampleCodeGenerator = sampleCodeGenerator;
     }
 
     @Transactional
@@ -26,7 +30,7 @@ public class SampleService {
 
         Sample sample = new Sample();
         sample.setAppointment(appointment);
-        sample.setSampleCode("sampleCode");
+        sample.setSampleCode(sampleCodeGenerator.generateSampleCode());
         sample.setCollectionDate(LocalDateTime.now());
 
         List<SampleTest> tests = appointment.getReferral().getMedicalTests().stream()
