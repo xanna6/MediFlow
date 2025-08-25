@@ -38,8 +38,8 @@ public class Referral {
             inverseJoinColumns = @JoinColumn(name = "test_id"))
     private Set<MedicalTest> medicalTests;
 
-    @OneToMany(mappedBy = "referral")
-    private List<Appointment> appointmentList;
+    @OneToOne(mappedBy = "referral")
+    private Appointment appointment;
 
     @Override
     public boolean equals(Object o) {

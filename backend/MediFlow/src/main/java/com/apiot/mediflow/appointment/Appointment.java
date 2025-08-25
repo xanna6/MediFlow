@@ -2,7 +2,6 @@ package com.apiot.mediflow.appointment;
 
 import com.apiot.mediflow.collectionPoint.CollectionPoint;
 import com.apiot.mediflow.referral.Referral;
-import com.apiot.mediflow.users.Patient;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -21,7 +20,7 @@ public class Appointment {
 
     private LocalDateTime date;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "referral_id", nullable = false)
     private Referral referral;
 
