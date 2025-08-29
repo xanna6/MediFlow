@@ -3,13 +3,17 @@ package com.apiot.mediflow.test;
 import com.apiot.mediflow.referral.Referral;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.Objects;
 import java.util.Set;
 
 @Data
 @Entity
+@AllArgsConstructor
+@NoArgsConstructor
 public class MedicalTest {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,18 +21,20 @@ public class MedicalTest {
     private String name;
     private String description;
     private float cost;
+    private String unit;
+    private String standard;
+
     @ManyToMany(mappedBy = "medicalTests")
     @JsonIgnore
     private Set<Referral> referrals;
 
-    public MedicalTest(Long id, String name, String description, float cost) {
+    public MedicalTest(Long id, String name, String description, float cost, String unit, String standard) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.cost = cost;
-    }
-
-    public MedicalTest() {
+        this.unit = unit;
+        this.standard = standard;
     }
 
     @Override

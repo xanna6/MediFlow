@@ -19,4 +19,15 @@ public class SampleController {
         SampleResponseDto sampleResponseDto = sampleService.createSample(sampleRequestDto.getAppointmentId());
         return ResponseEntity.status(HttpStatus.CREATED).body(sampleResponseDto);
     }
+
+    @PutMapping("/{id}/results")
+    public ResponseEntity<SampleResponseDto> updateSampleResults(@PathVariable Long id, @RequestBody UpdateSampleResultsDto dto) {
+
+        if (!dto.getSampleId().equals(id)) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        SampleResponseDto updatedSample = sampleService.updateSampleResults(dto);
+        return ResponseEntity.status(HttpStatus.OK).body(updatedSample);
+    }
 }

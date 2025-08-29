@@ -41,6 +41,14 @@ public class Referral {
     @OneToOne(mappedBy = "referral")
     private Appointment appointment;
 
+    public Referral(Long id, String referrer, String referral_number, LocalDateTime creationDate, Set<MedicalTest> medicalTests) {
+        this.id = id;
+        this.referrer = referrer;
+        this.referral_number = referral_number;
+        this.creationDate = creationDate;
+        this.medicalTests = medicalTests;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

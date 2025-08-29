@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class SampleService {
@@ -42,17 +44,55 @@ public class SampleService {
                 })
                 .toList();
 
-        sample.setTests(tests);
+        sample.setSampleTests(tests);
 
         Sample savedSample = sampleRepository.save(sample);
 
         return mapSampleToSampleDto(savedSample);
     }
 
+    @Transactional
+    public SampleResponseDto updateSampleResults(UpdateSampleResultsDto dto) {
+        Sample sample = sampleRepository.findById(dto.getSampleId())
+                .orElseThrow(() -> new RuntimeException("Sample not found"));
+
+        Map<Long, String> resultsMap = dto.getTests().stream()
+                .collect(Collectors.toMap(UpdateSampleTestResultDto::getSampleTestId,
+                        UpdateSampleTestResultDto::getResult));
+
+        for (SampleTest st : sample.getSampleTests()) {
+            if (resultsMap.containsKey(st.getId())) {
+                st.setResult(resultsMap.get(st.getId()));
+                st.setResultDate(LocalDateTime.now());
+            }
+        }
+
+        Sample updatedSample = sampleRepository.save(sample);
+
+        return mapSampleToSampleDto(updatedSample);
+    }
+
     private SampleResponseDto mapSampleToSampleDto(Sample sample) {
         SampleResponseDto sampleResponseDto = new SampleResponseDto();
         sampleResponseDto.setId(sample.getId());
         sampleResponseDto.setSampleCode(sample.getSampleCode());
+        sampleResponseDto.setSampleTestResults(sample
+                .getSampleTests()
+                .stream()
+                .map(this::mapSampleTestToSampleTestDto)
+                .collect(Collectors.toList())
+        );
         return sampleResponseDto;
+    }
+
+    private SampleTestDto mapSampleTestToSampleTestDto(SampleTest sampleTest) {
+        SampleTestDto sampleTestDto = new SampleTestDto();
+        sampleTestDto.setId(sampleTest.getId());
+        sampleTestDto.setName(sampleTestDto.getName());
+        sampleTestDto.setResult(sampleTest.getResult());
+        sampleTestDto.setUnit(sampleTest.getUnit());
+        sampleTestDto.setStandard(sampleTest.getStandard());
+        sampleTestDto.setResultDate(sampleTest.getResultDate());
+        return sampleTestDto;
     }
 }

@@ -5,15 +5,16 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class SampleResponseDto {
+public class SampleTestDto {
 
     private Long id;
-    private String sampleCode;
-    private LocalDateTime createdAt;
-    private List<SampleTestDto> sampleTestResults;
+    private String name;
+    private String result;
+    private String unit;
+    private String standard;
+    private LocalDateTime resultDate;
 }

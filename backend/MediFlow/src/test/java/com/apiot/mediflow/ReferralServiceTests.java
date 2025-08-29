@@ -2,7 +2,6 @@ package com.apiot.mediflow;
 
 import com.apiot.mediflow.referral.*;
 import com.apiot.mediflow.test.MedicalTest;
-import com.apiot.mediflow.test.MedicalTestDto;
 import com.apiot.mediflow.test.MedicalTestRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,8 +31,8 @@ public class ReferralServiceTests {
         referralService = new ReferralService(referralRepository, medicalTestRepository);
 
         medicalTests = Set.of(
-                new MedicalTest(1L, "TSH", "Badanie funkcji tarczycy", 45.99F),
-                new MedicalTest(2L, "Glukoza", "Badanie poziomu glukozy na czczo", 19.99F));
+                new MedicalTest(1L, "TSH", "Badanie funkcji tarczycy", 45.99F, "mIU/l", "0.4 - 4.0"),
+                new MedicalTest(2L, "Glukoza", "Badanie poziomu glukozy na czczo", 19.99F, "mg/dl", "70 - 99"));
     }
 
     @Test

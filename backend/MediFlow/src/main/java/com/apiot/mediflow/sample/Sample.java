@@ -28,5 +28,5 @@ public class Sample {
     private LocalDateTime collectionDate;
 
     @OneToMany(mappedBy = "sample", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<SampleTest> tests = new ArrayList<>();
+    private List<SampleTest> sampleTests = new ArrayList<>();
 }
