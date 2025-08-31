@@ -40,6 +40,8 @@ public class SampleService {
                     SampleTest sampleTest = new SampleTest();
                     sampleTest.setSample(sample);
                     sampleTest.setMedicalTest(test);
+                    sampleTest.setUnit(test.getUnit());
+                    sampleTest.setStandard(test.getStandard());
                     return sampleTest;
                 })
                 .toList();
@@ -51,8 +53,14 @@ public class SampleService {
         return mapSampleToSampleDto(savedSample);
     }
 
+    protected SampleResponseDto getSampleById(Long id) {
+        Sample sample = sampleRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Sample not found"));
+        return mapSampleToSampleDto(sample);
+    }
+
     @Transactional
-    public SampleResponseDto updateSampleResults(UpdateSampleResultsDto dto) {
+    protected SampleResponseDto updateSampleResults(UpdateSampleResultsDto dto) {
         Sample sample = sampleRepository.findById(dto.getSampleId())
                 .orElseThrow(() -> new RuntimeException("Sample not found"));
 
@@ -76,7 +84,8 @@ public class SampleService {
         SampleResponseDto sampleResponseDto = new SampleResponseDto();
         sampleResponseDto.setId(sample.getId());
         sampleResponseDto.setSampleCode(sample.getSampleCode());
-        sampleResponseDto.setSampleTestResults(sample
+        sampleResponseDto.setCreatedAt(sample.getCollectionDate());
+        sampleResponseDto.setSampleTestDtos(sample
                 .getSampleTests()
                 .stream()
                 .map(this::mapSampleTestToSampleTestDto)
@@ -88,7 +97,7 @@ public class SampleService {
     private SampleTestDto mapSampleTestToSampleTestDto(SampleTest sampleTest) {
         SampleTestDto sampleTestDto = new SampleTestDto();
         sampleTestDto.setId(sampleTest.getId());
-        sampleTestDto.setName(sampleTestDto.getName());
+        sampleTestDto.setName(sampleTest.getMedicalTest().getName());
         sampleTestDto.setResult(sampleTest.getResult());
         sampleTestDto.setUnit(sampleTest.getUnit());
         sampleTestDto.setStandard(sampleTest.getStandard());

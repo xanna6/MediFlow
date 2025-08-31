@@ -20,6 +20,12 @@ public class SampleController {
         return ResponseEntity.status(HttpStatus.CREATED).body(sampleResponseDto);
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<SampleResponseDto> getSampleById(@PathVariable long id) {
+        SampleResponseDto sampleResponseDto = sampleService.getSampleById(id);
+        return ResponseEntity.status(HttpStatus.OK).body(sampleResponseDto);
+    }
+
     @PutMapping("/{id}/results")
     public ResponseEntity<SampleResponseDto> updateSampleResults(@PathVariable Long id, @RequestBody UpdateSampleResultsDto dto) {
 
