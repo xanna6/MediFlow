@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.util.Objects;
 import java.util.Set;
@@ -26,6 +27,7 @@ public class MedicalTest {
 
     @ManyToMany(mappedBy = "medicalTests")
     @JsonIgnore
+    @ToString.Exclude
     private Set<Referral> referrals;
 
     public MedicalTest(Long id, String name, String description, float cost, String unit, String standard) {

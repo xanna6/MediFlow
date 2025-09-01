@@ -1,10 +1,12 @@
 package com.apiot.mediflow.sample;
 
 import com.apiot.mediflow.appointment.Appointment;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -21,6 +23,8 @@ public class Sample {
     private Long id;
 
     @OneToOne
+    @JsonIgnore
+    @ToString.Exclude
     private Appointment appointment;
 
     private String sampleCode;
