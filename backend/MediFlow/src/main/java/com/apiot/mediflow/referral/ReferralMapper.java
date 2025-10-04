@@ -11,8 +11,10 @@ public class ReferralMapper {
     protected static ReferralDto mapReferralToReferralDto(Referral referral) {
         ReferralDto referralDto = new ReferralDto();
         referralDto.setId(referral.getId());
-        referralDto.setReferrer(referral.getReferrer());
-        referralDto.setReferral_number(referral.getReferral_number());
+        referralDto.setReferrerFirstname(referral.getDoctor().getFirstname());
+        referralDto.setReferrerLastname(referral.getDoctor().getLastname());
+        referralDto.setReferrerSpecialization(referral.getDoctor().getSpecialization());
+        referralDto.setReferralNumber(referral.getReferralNumber());
         referralDto.setCreationDate(referral.getCreationDate());
         referralDto.setMedicalTestDtoSet(
                 referral.getMedicalTests().stream()
@@ -23,8 +25,7 @@ public class ReferralMapper {
 
     protected static Referral mapReferralCreateDtoToReferral(ReferralCreateDto referralRequestDto, Set<MedicalTest> medicalTests) {
         Referral referral = new Referral();
-        referral.setReferrer(referralRequestDto.getReferrer());
-        referral.setReferral_number(referralRequestDto.getReferralNumber());
+        referral.setReferralNumber(referralRequestDto.getReferralNumber());
         referral.setMedicalTests(medicalTests);
         return referral;
     }

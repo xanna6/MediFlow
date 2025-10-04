@@ -16,8 +16,10 @@ import java.util.Set;
 public class ReferralDto {
 
     private Long id;
-    private String referrer;
-    private String referral_number;
+    private String referrerFirstname;
+    private String referrerLastname;
+    private String referrerSpecialization;
+    private String referralNumber;
     private LocalDateTime creationDate;
     private Set<MedicalTestDto> medicalTestDtoSet;
 }

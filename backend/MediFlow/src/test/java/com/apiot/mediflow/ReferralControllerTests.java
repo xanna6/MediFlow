@@ -68,14 +68,18 @@ public class ReferralControllerTests {
         }).when(jwtAuthenticationFilter).doFilter(any(), any(), any());
     }
 
+
+
     @Test
     void shouldReturnListOfReferralsAsJson() throws Exception {
         // given
         Set<MedicalTestDto> medicalTestDtos = Set.of(
                 new MedicalTestDto(1L, "TSH", "Badanie funkcji tarczycy", 45.99F));
         List<ReferralDto> referralDtoList = List.of(
-                new ReferralDto(1L, "Jan Kowalski", "A25000001", LocalDateTime.now(), medicalTestDtos),
-                new ReferralDto(2L, "Jakub Kozłowski", "A25000002", LocalDateTime.now(), medicalTestDtos)
+                new ReferralDto(1L, "Jan", "Kowalski", "Kardiolog",
+                        "A25000001", LocalDateTime.now(), medicalTestDtos),
+                new ReferralDto(2L, "Jakub", "Kozłowski", "Pediatra",
+                        "A25000002", LocalDateTime.now(), medicalTestDtos)
         );
         when(referralService.getAllReferrals()).thenReturn(referralDtoList);
 
@@ -107,8 +111,8 @@ public class ReferralControllerTests {
         Set<MedicalTestDto> medicalTestDtos = Set.of(
                 new MedicalTestDto(1L, "TSH", "Badanie funkcji tarczycy", 45.99F),
                 new MedicalTestDto(2L, "Glukoza", "Badanie poziomu glukozy na czczo", 19.99F));
-        ReferralDto referralDto = new ReferralDto(1L, "Jan Kowalski", "A25000001",
-                LocalDateTime.now(), medicalTestDtos);
+        ReferralDto referralDto = new ReferralDto(1L, "Jan", "Kowalski",
+                "Internista", "A25000001", LocalDateTime.now(), medicalTestDtos);
 
         when(referralService.getReferralById(1L)).thenReturn(referralDto);
 
@@ -141,9 +145,9 @@ public class ReferralControllerTests {
                 new MedicalTestDto(1L, "TSH", "Badanie funkcji tarczycy", 45.99F),
                 new MedicalTestDto(2L, "Glukoza", "Badanie poziomu glukozy na czczo", 19.99F));
 
-        ReferralCreateDto referralCreateDto = new ReferralCreateDto("Jan Kowalski", "A25000003", Set.of(1L, 2L));
-        ReferralDto savedReferral = new ReferralDto(5L, "Jan Kowalski", "A25000003",
-                LocalDateTime.now(), medicalTestDtos);
+        ReferralCreateDto referralCreateDto = new ReferralCreateDto(1L,1L, "A25000003", Set.of(1L, 2L));
+        ReferralDto savedReferral = new ReferralDto(5L, "Jan", "Kowalski",
+                "Internista", "A25000003", LocalDateTime.now(), medicalTestDtos);
 
         when(referralService.createReferral(any(ReferralCreateDto.class))).thenReturn(savedReferral);
 
@@ -164,7 +168,8 @@ public class ReferralControllerTests {
     void shouldReturnBadRequestWhenValidationFails() throws Exception {
         String invalidRequest = """
             {
-                "referrer": "",
+                "patientId": null,
+                "doctorId": null,
                 "referralNumber": "",
                 "medicalTestIds": []
             }
@@ -176,7 +181,8 @@ public class ReferralControllerTests {
                         .content(invalidRequest))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.errors").exists())
-                .andExpect(jsonPath("$.errors.referrer").value("must not be blank"))
+                .andExpect(jsonPath("$.errors.doctorId").value("must not be null"))
+                .andExpect(jsonPath("$.errors.patientId").value("must not be null"))
                 .andExpect(jsonPath("$.errors.referralNumber").value("must not be blank"))
                 .andExpect(jsonPath("$.errors.medicalTestIds").value("must not be empty"));;
     }

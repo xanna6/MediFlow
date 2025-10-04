@@ -2,6 +2,8 @@ package com.apiot.mediflow.referral;
 
 import com.apiot.mediflow.appointment.Appointment;
 import com.apiot.mediflow.test.MedicalTest;
+import com.apiot.mediflow.users.Doctor;
+import com.apiot.mediflow.users.Patient;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -10,7 +12,6 @@ import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -23,13 +24,19 @@ public class Referral {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    private String referrer;
-    private String referral_number;
+    private String referralNumber;
 
     @CreationTimestamp
     @Column(name = "creation_date", nullable = false, updatable = false)
     private LocalDateTime creationDate;
+
+    @ManyToOne
+    @JoinColumn(name = "doctor_id")
+    private Doctor doctor;
+
+    @ManyToOne
+    @JoinColumn(name = "patient_id")
+    private Patient patient;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
@@ -41,10 +48,10 @@ public class Referral {
     @OneToOne(mappedBy = "referral")
     private Appointment appointment;
 
-    public Referral(Long id, String referrer, String referral_number, LocalDateTime creationDate, Set<MedicalTest> medicalTests) {
+    public Referral(Long id, String referralNumber, LocalDateTime creationDate, Doctor doctor, Set<MedicalTest> medicalTests) {
         this.id = id;
-        this.referrer = referrer;
-        this.referral_number = referral_number;
+        this.doctor = doctor;
+        this.referralNumber = referralNumber;
         this.creationDate = creationDate;
         this.medicalTests = medicalTests;
     }
