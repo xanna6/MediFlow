@@ -145,7 +145,7 @@ public class ReferralControllerTests {
                 new MedicalTestDto(1L, "TSH", "Badanie funkcji tarczycy", 45.99F),
                 new MedicalTestDto(2L, "Glukoza", "Badanie poziomu glukozy na czczo", 19.99F));
 
-        ReferralCreateDto referralCreateDto = new ReferralCreateDto(1L,1L, "A25000003", Set.of(1L, 2L));
+        ReferralCreateDto referralCreateDto = new ReferralCreateDto(1L,1L, Set.of(1L, 2L));
         ReferralDto savedReferral = new ReferralDto(5L, "Jan", "Kowalski",
                 "Internista", "A25000003", LocalDateTime.now(), medicalTestDtos);
 

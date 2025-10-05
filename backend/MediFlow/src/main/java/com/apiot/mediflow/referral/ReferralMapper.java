@@ -1,9 +1,7 @@
 package com.apiot.mediflow.referral;
 
-import com.apiot.mediflow.test.MedicalTest;
 import com.apiot.mediflow.test.MedicalTestMapper;
 
-import java.util.Set;
 import java.util.stream.Collectors;
 
 public class ReferralMapper {
@@ -21,12 +19,5 @@ public class ReferralMapper {
                         .map(MedicalTestMapper::mapMedicalTestToMedicalTestDto)
                         .collect(Collectors.toSet()));
         return referralDto;
-    }
-
-    protected static Referral mapReferralCreateDtoToReferral(ReferralCreateDto referralRequestDto, Set<MedicalTest> medicalTests) {
-        Referral referral = new Referral();
-        referral.setReferralNumber(referralRequestDto.getReferralNumber());
-        referral.setMedicalTests(medicalTests);
-        return referral;
     }
 }

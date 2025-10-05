@@ -18,9 +18,6 @@ public class ReferralCreateDto {
     @NotNull
     private Long patientId;
 
-    @NotBlank
-    private String referralNumber;
-
     @NotEmpty
     private Set<Long> medicalTestIds;
 }

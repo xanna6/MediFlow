@@ -1,6 +1,7 @@
 package com.apiot.mediflow;
 
 import com.apiot.mediflow.referral.*;
+import com.apiot.mediflow.referralNumberGenerator.ReferralNumberGenerator;
 import com.apiot.mediflow.test.MedicalTest;
 import com.apiot.mediflow.test.MedicalTestRepository;
 import com.apiot.mediflow.users.Doctor;
@@ -28,6 +29,7 @@ public class ReferralServiceTests {
     private DoctorRepository doctorRepository;
     private PatientRepository patientRepository;
     private ReferralService referralService;
+    private ReferralNumberGenerator referralNumberGenerator;
 
     private Set<MedicalTest> medicalTests;
     private Doctor doctor;
@@ -39,7 +41,9 @@ public class ReferralServiceTests {
         medicalTestRepository = mock(MedicalTestRepository.class);
         doctorRepository = mock(DoctorRepository.class);
         patientRepository = mock(PatientRepository.class);
-        referralService = new ReferralService(referralRepository, medicalTestRepository, doctorRepository, patientRepository);
+        referralNumberGenerator = mock(ReferralNumberGenerator.class);
+        referralService = new ReferralService(referralRepository, medicalTestRepository, doctorRepository, patientRepository,
+                referralNumberGenerator);
 
         medicalTests = Set.of(
                 new MedicalTest(1L, "TSH", "Badanie funkcji tarczycy", 45.99F, "mIU/l", "0.4 - 4.0"),
@@ -110,7 +114,7 @@ public class ReferralServiceTests {
     void shouldCreateReferral() {
         // given
         Set<Long> medicalTestIds = Set.of(1L, 2L);
-        ReferralCreateDto referralDto = new ReferralCreateDto(1L, 1L,"A25000003", medicalTestIds);
+        ReferralCreateDto referralDto = new ReferralCreateDto(1L, 1L, medicalTestIds);
 
         Referral savedReferral = new Referral(1L, "A25000003", LocalDateTime.now(), doctor, medicalTests);
 

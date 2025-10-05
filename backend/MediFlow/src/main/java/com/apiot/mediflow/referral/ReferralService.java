@@ -1,5 +1,6 @@
 package com.apiot.mediflow.referral;
 
+import com.apiot.mediflow.referralNumberGenerator.ReferralNumberGenerator;
 import com.apiot.mediflow.test.MedicalTest;
 import com.apiot.mediflow.test.MedicalTestRepository;
 import com.apiot.mediflow.users.Doctor;
@@ -26,6 +27,7 @@ public class ReferralService {
     private final MedicalTestRepository medicalTestRepository;
     private final DoctorRepository doctorRepository;
     private final PatientRepository patientRepository;
+    private final ReferralNumberGenerator referralNumberGenerator;
 
     public List<ReferralDto> getAllReferrals() {
         return referralRepository.findAllWithMedicalTests()
@@ -41,10 +43,14 @@ public class ReferralService {
 
      @Transactional
      public ReferralDto createReferral(ReferralCreateDto referralCreateDto) {
+
+         Referral referral = new Referral();
+         referral.setReferralNumber(referralNumberGenerator.generateNextNumber());
+
          Set<MedicalTest> tests = new HashSet<>(medicalTestRepository
                  .findAllById(referralCreateDto.getMedicalTestIds()));
-
-         Referral referral = ReferralMapper.mapReferralCreateDtoToReferral(referralCreateDto, tests);
+         
+         referral.setMedicalTests(tests);
 
          Doctor doctor = doctorRepository.findById(referralCreateDto.getDoctorId())
                  .orElseThrow(() -> new EntityNotFoundException("Doctor with id " + referralCreateDto.getDoctorId() + " not found"));
