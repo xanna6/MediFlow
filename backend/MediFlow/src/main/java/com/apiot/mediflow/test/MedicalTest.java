@@ -25,6 +25,9 @@ public class MedicalTest {
     private String unit;
     private String standard;
 
+    @ManyToOne
+    private MedicalTestCategory category;
+
     @ManyToMany(mappedBy = "medicalTests")
     @JsonIgnore
     @ToString.Exclude

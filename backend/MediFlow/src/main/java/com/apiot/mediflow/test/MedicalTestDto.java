@@ -12,6 +12,4 @@ import lombok.Setter;
 public class MedicalTestDto {
     private Long id;
     private String name;
-    private String description;
-    private float cost;
 }
