@@ -1,5 +1,6 @@
 package com.apiot.mediflow.referral;
 
+import com.apiot.mediflow.users.PatientDto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -16,7 +17,7 @@ public class ReferralCreateDto {
     private Long doctorId;
 
     @NotNull
-    private Long patientId;
+    private PatientDto patientDto;
 
     @NotEmpty
     private Set<Long> medicalTestIds;

@@ -22,10 +22,10 @@ public class Patient {
     private String lastName;
     private String pesel;
     private LocalDate birthDate;
-    private long phoneNumber;
+    private Long phoneNumber;
 
     @OneToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id")
     private User user;
 
     @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -38,5 +38,12 @@ public class Patient {
         this.pesel = pesel;
         this.birthDate = birthDate;
         this.phoneNumber = phoneNumber;
+    }
+
+    public Patient(String firstName, String lastName, String pesel, LocalDate birthDate) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.pesel = pesel;
+        this.birthDate = birthDate;
     }
 }
