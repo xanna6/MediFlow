@@ -68,3 +68,44 @@ button {
     font-size: 15px;
     margin-top: 0;
 }
+
+.react-datepicker-wrapper {
+    width: 100%;
+}
+
+.react-datepicker-wrapper input {
+    width: 100%; !important;
+    padding: 6px 8px;
+    border: 1px solid #007acc;
+    border-radius: 6px;
+    font-size: 14px;
+    color: #003366;
+    background-color: #f0f8ff;
+}
+
+.react-datepicker__input-container {
+    width: 100%;
+}
+
+.react-datepicker__input-container input {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.react-datepicker {
+    font-family: 'Segoe UI', sans-serif;
+    border: 1px solid #007acc;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.react-datepicker__header {
+    background-color: #e6f3ff;
+    border-bottom: 1px solid #007acc;
+}
+
+.react-datepicker__day--selected,
+.react-datepicker__day--keyboard-selected {
+    background-color: #007acc !important;
+    color: white !important;
+}

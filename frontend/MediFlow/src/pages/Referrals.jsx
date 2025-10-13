@@ -1,11 +1,33 @@
 import React, { useEffect, useState } from "react";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import "../styles/ReferralForm.css";
+
+function getBirthDateFromPesel(pesel) {
+    if (!/^\d{11}$/.test(pesel)) return null;
+
+    let year = parseInt(pesel.substring(0, 2), 10);
+    let month = parseInt(pesel.substring(2, 4), 10);
+    let day = parseInt(pesel.substring(4, 6), 10);
+
+    if (month > 0 && month < 13) {
+        year += 1900;
+    } else if (month > 20 && month < 33) {
+        year += 2000;
+        month -= 20;
+    } else {
+        return null;
+    }
+
+    const date = new Date(year, month - 1, day);
+    return isNaN(date.getTime()) ? null : date;
+}
 
 const ReferralForm = () => {
     const [pesel, setPesel] = useState("");
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
-    const [birthDate, setBirthDate] = useState("");
+    const [birthDate, setBirthDate] = useState(null);
     const [tests, setTests] = useState([]);
     const [selectedTests, setSelectedTests] = useState([]);
     const [message, setMessage] = useState("");
@@ -21,13 +43,17 @@ const ReferralForm = () => {
     const handlePeselBlur = async () => {
         if (pesel.length < 11) return;
 
+        const birthDateFromPesel = getBirthDateFromPesel(pesel);
+        if (birthDateFromPesel) {
+            setBirthDate(birthDateFromPesel);
+        }
+
         const res = await fetch(`/api/patients/by-pesel/${pesel}`);
         if (res.ok) {
             const data = await res.json();
             setFirstName(data.firstName);
             setLastName(data.lastName);
-            setBirthDate(data.birthDate)
-
+            setBirthDate(data.birthDate ? new Date(data.birthDate) : null);
             setMessage(`Znaleziono pacjenta: ${data.firstName} ${data.lastName}`);
         } else {
             setFirstName("");
@@ -46,7 +72,8 @@ const ReferralForm = () => {
         e.preventDefault();
 
         const payload = {
-            patientDto: { firstName, lastName, pesel , birthDate },
+            patientDto: { firstName, lastName, pesel ,
+                birthDate: birthDate ? birthDate.toISOString().split("T")[0] : null },
             doctorId: 1,
             medicalTestIds: selectedTests,
         };
@@ -101,20 +128,27 @@ const ReferralForm = () => {
             />
 
             <label>Data urodzenia:</label>
-            <input
-                type="text"
-                value={birthDate}
-                onChange={(e) => setBirthDate(e.target.value)}/>
+            <DatePicker
+                selected={birthDate}
+                onChange={(date) => setBirthDate(date)}
+                dateFormat="dd.MM.yyyy"
+                placeholderText="Wybierz datę"
+                maxDate={new Date()}
+                showMonthDropdown
+                showYearDropdown
+                dropdownMode="select"
+            />
 
-            <h3>Badania:</h3>
-            {tests.map((group) => (
-                <div key={group.category}>
-                    <h4>{group.category}</h4>
-                    {group.medicalTests.map((test) => (
-                        <div key={test.id} className="checkbox-item">
-                            <input
-                                type="checkbox"
-                                id={`test-${test.id}`}
+    <h3>Badania:</h3>
+    {
+        tests.map((group) => (
+            <div key={group.category}>
+                <h4>{group.category}</h4>
+                {group.medicalTests.map((test) => (
+                    <div key={test.id} className="checkbox-item">
+                        <input
+                            type="checkbox"
+                            id={`test-${test.id}`}
                                 checked={selectedTests.includes(test.id)}
                                 onChange={() => toggleTest(test.id)}
                             />
