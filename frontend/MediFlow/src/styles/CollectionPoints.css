@@ -1,0 +1,83 @@
+.collection-points-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.collection-points-container h2 {
+    color: #007acc;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.filter-section {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 20px;
+}
+
+.filter-section input {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+}
+
+.points-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.point-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #f9fcff;
+    border: 1px solid #d0e6f7;
+    border-radius: 10px;
+    padding: 14px 18px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    transition: background 0.2s ease;
+}
+
+.point-card:hover {
+    background: #eef7ff;
+}
+
+.point-info h3 {
+    margin: 0;
+    color: #004f88;
+}
+
+.point-info p {
+    margin: 4px 0;
+    color: #333;
+}
+
+.point-actions button {
+    background: #007acc;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.point-actions button:hover {
+    background: #005f99;
+}
+
+.selected-info {
+    margin-top: 16px;
+    padding: 10px;
+    border-top: 1px solid #cfe2f3;
+    color: #004f88;
+    font-weight: 500;
+}
+
+.collection-points-loading {
+    text-align: center;
+    color: #555;
+}
