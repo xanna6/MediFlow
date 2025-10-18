@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "../styles/CollectionPoints.css";
+import AppointmentModal from "./AppointmentModal.jsx";
 
 export default function CollectionPoints() {
     const [points, setPoints] = useState([]);
@@ -87,11 +88,10 @@ export default function CollectionPoints() {
             )}
 
             {selectedPoint && (
-                <div className="selected-info">
-                    <p>
-                        Wybrano punkt: <strong>{selectedPoint.name}</strong> ({selectedPoint.city})
-                    </p>
-                </div>
+                <AppointmentModal
+                    point={selectedPoint}
+                    onClose={() => setSelectedPoint(null)}
+                />
             )}
         </div>
     );
