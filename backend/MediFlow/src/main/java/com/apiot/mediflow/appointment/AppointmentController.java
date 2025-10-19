@@ -35,4 +35,13 @@ public class AppointmentController {
         LocalDate localDate = LocalDate.parse(date);
         return ResponseEntity.ok(appointmentService.getAppointmentsForDay(localDate));
     }
+
+    @GetMapping("/available")
+    public ResponseEntity<AvailableSlotsResponse> getAvailableSlots(@RequestParam Long collectionPointId,
+                                                                    @RequestParam String date
+    ) {
+        LocalDate localDate = LocalDate.parse(date);
+        AvailableSlotsResponse availableSlotsResponse = appointmentService.getAvailableSlots(collectionPointId, localDate);
+        return ResponseEntity.ok(availableSlotsResponse);
+    }
 }

@@ -12,7 +12,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -77,6 +80,30 @@ public class AppointmentService {
                 .stream()
                 .map(this::mapAppointmentToAppointmentResponseDto)
                 .collect(Collectors.toList());
+    }
+
+    public AvailableSlotsResponse getAvailableSlots(Long pointId, LocalDate date) {
+        CollectionPoint point = collectionPointRepository.findById(pointId)
+                .orElseThrow(() -> new RuntimeException("Collection point not found"));
+
+        LocalDateTime startOfDay = date.atStartOfDay();
+        LocalDateTime endOfDay = date.atTime(LocalTime.MAX);
+
+        List<Appointment> takenAppointments = appointmentRepository.findByCollectionPointIdAndDateBetween(pointId, startOfDay, endOfDay);
+        Set<LocalTime> takenTimes = takenAppointments.stream()
+                .map(appointment -> appointment.getDate().toLocalTime())
+                .collect(Collectors.toSet());
+
+        List<String> available = new ArrayList<>();
+        LocalTime time = point.getOpenedFrom();
+        while (time.isBefore(point.getOpenedTo())) {
+            if (!takenTimes.contains(time)) {
+                available.add(time.toString());
+            }
+            time = time.plusMinutes(5);
+        }
+
+        return new AvailableSlotsResponse(pointId, date.toString(), available);
     }
 
     private AppointmentResponseDto mapAppointmentToAppointmentResponseDto(Appointment appointment) {
