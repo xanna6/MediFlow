@@ -4,6 +4,9 @@ import com.apiot.mediflow.collectionPoint.CollectionPoint;
 import com.apiot.mediflow.collectionPoint.CollectionPointRepository;
 import com.apiot.mediflow.referral.Referral;
 import com.apiot.mediflow.referral.ReferralRepository;
+import com.apiot.mediflow.users.Patient;
+import com.apiot.mediflow.users.PatientRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,20 +21,30 @@ public class AppointmentService {
     private final AppointmentRepository appointmentRepository;
     private final ReferralRepository referralRepository;
     private final CollectionPointRepository collectionPointRepository;
+    private final PatientRepository patientRepository;
 
     public AppointmentService(AppointmentRepository appointmentRepository, ReferralRepository referralRepository,
-                              CollectionPointRepository collectionPointRepository) {
+                              CollectionPointRepository collectionPointRepository, PatientRepository patientRepository) {
         this.appointmentRepository = appointmentRepository;
         this.referralRepository = referralRepository;
         this.collectionPointRepository = collectionPointRepository;
+        this.patientRepository = patientRepository;
     }
 
     @Transactional
     protected AppointmentResponseDto createAppointment(AppointmentRequestDto appointmentRequestDto) {
-        Referral referral = referralRepository.findById(appointmentRequestDto.getReferralId())
-                .orElseThrow(() -> new RuntimeException("Referral does not exist"));
+        Patient patient = patientRepository.findByPesel(appointmentRequestDto.getPesel())
+                .orElseThrow(() -> new EntityNotFoundException("Patient not found"));
+
+        Referral referral = referralRepository.findByReferralNumber(appointmentRequestDto.getReferralNumber())
+                .orElseThrow(() -> new EntityNotFoundException("Referral does not exist"));
+
+        if (!referral.getPatient().equals(patient)) {
+            throw new IllegalArgumentException("Referral does not belong to the patient");
+        }
+
         CollectionPoint collectionPoint = collectionPointRepository.findById(appointmentRequestDto.getCollectionPointId())
-                .orElseThrow(() -> new RuntimeException("Collection point does not exist"));
+                .orElseThrow(() -> new EntityNotFoundException("Collection point does not exist"));
 
         if (appointmentRepository.existsByReferral(referral)) {
             throw new RuntimeException("Referral has already been used");

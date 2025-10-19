@@ -10,7 +10,9 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AppointmentRequestDto {
+
     private LocalDateTime date;
-    private Long referralId;
+    private String referralNumber;
     private Long collectionPointId;
+    private String pesel;
 }

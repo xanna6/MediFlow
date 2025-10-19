@@ -16,4 +16,6 @@ public interface ReferralRepository extends JpaRepository<Referral, Long> {
 
     @Query("SELECT r FROM Referral r LEFT JOIN FETCH r.medicalTests WHERE r.id = :id")
     Optional<Referral> findByIdWithMedicalTests(@Param("id") Long id);
+
+    Optional<Referral> findByReferralNumber(String referralNumber);
 }
