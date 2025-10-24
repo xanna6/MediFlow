@@ -36,8 +36,6 @@ export default function CollectionPoints() {
 
     const handleSelect = (point) => {
         setSelectedPoint(point);
-        // otwarcie modala do wybrania terminu
-        // openModal(point);
     };
 
     if (loading) {

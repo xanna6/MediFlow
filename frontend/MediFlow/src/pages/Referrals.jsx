@@ -33,7 +33,6 @@ const ReferralForm = () => {
     const [message, setMessage] = useState("");
 
     useEffect(() => {
-        console.log("wysyłam zapytanie o listę badań")
         fetch("/api/medical-tests/grouped")
             .then((res) => res.json())
             .then(setTests)

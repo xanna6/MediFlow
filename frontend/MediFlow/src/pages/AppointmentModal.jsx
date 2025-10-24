@@ -25,36 +25,29 @@ export default function AppointmentModal({ point, onClose }) {
 
     useEffect(() => {
         if (!selectedDate) return;
-        setLoading(true);
-        // fetch(`/api/appointments/available?pointId=${point.id}&date=${yyyy-MM-dd}`)
-        setTimeout(() => {
-            const hours = generateHours("07:00", "15:00", 15); // co 15 min
-            setAvailableTimes(
-                hours.map((h, idx) => ({
-                    time: h,
-                    available: idx % 5 !== 0, // co piąty termin zajęty
-                }))
-            );
-            setLoading(false);
-        }, 500);
-    }, [selectedDate, point]);
 
-    const generateHours = (start, end, interval) => {
-        const result = [];
-        let [h, m] = start.split(":").map(Number);
-        const [endH, endM] = end.split(":").map(Number);
-        while (h < endH || (h === endH && m <= endM)) {
-            result.push(
-                `${h.toString().padStart(2, "0")}:${m.toString().padStart(2, "0")}`
-            );
-            m += interval;
-            if (m >= 60) {
-                h += 1;
-                m -= 60;
+        const fetchSlots = async () => {
+            setLoading(true);
+
+            try {
+                const res = await fetch(
+                    `/api/appointments/available?collectionPointId=${point.id}&date=${selectedDate.toISOString().split("T")[0]}`
+                );
+
+                if (!res.ok) throw new Error("Nie udało się pobrać dostępnych godzin");
+                const data = await res.json();
+                console.log("Odpowiedź z API:", data);
+
+                setAvailableTimes(data.availableSlots || []);
+            } catch {
+                setAvailableTimes([]);
+            } finally {
+                setLoading(false);
             }
-        }
-        return result;
-    };
+        };
+
+        fetchSlots();
+    }, [selectedDate, point.id]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -65,7 +58,7 @@ export default function AppointmentModal({ point, onClose }) {
 
         const appointment = {
             collectionPointId: point.id,
-            date: selectedDate.toISOString()[0],
+            date: `${selectedDate.toISOString().split("T")[0]}T${selectedTime}:00`,
             pesel,
             referralNumber,
         };
@@ -132,19 +125,14 @@ export default function AppointmentModal({ point, onClose }) {
                             <p>Ładowanie godzin...</p>
                         ) : (
                             <div className="times-grid">
-                                {availableTimes.map((slot) => (
-                                    <button
-                                        key={slot.time}
-                                        className={`time-btn ${
-                                            !slot.available ? "disabled" : ""
-                                        } ${selectedTime === slot.time ? "selected" : ""}`}
-                                        onClick={() =>
-                                            slot.available && setSelectedTime(slot.time)
-                                        }
-                                        disabled={!slot.available}
-                                    >
-                                        {slot.time}
-                                    </button>
+                                {availableTimes.map((time, index) => (
+                                <button
+                                    key={`${time}-${index}`}
+                                    className={`time-btn ${selectedTime === time ? "selected" : ""}`}
+                                    onClick={() => setSelectedTime(time)}
+                                >
+                                    {time}
+                                </button>
                                 ))}
                             </div>
                         )}
