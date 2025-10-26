@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "../styles/AppointmentModal.css";
+import TimePickerRow from "./AvailableSlotsModal.jsx";
 
 export default function AppointmentModal({ point, onClose }) {
     const [selectedDate, setSelectedDate] = useState(null);
@@ -124,17 +125,12 @@ export default function AppointmentModal({ point, onClose }) {
                         {loading ? (
                             <p>Ładowanie godzin...</p>
                         ) : (
-                            <div className="times-grid">
-                                {availableTimes.map((time, index) => (
-                                <button
-                                    key={`${time}-${index}`}
-                                    className={`time-btn ${selectedTime === time ? "selected" : ""}`}
-                                    onClick={() => setSelectedTime(time)}
-                                >
-                                    {time}
-                                </button>
-                                ))}
-                            </div>
+                            <TimePickerRow
+                                availableSlots={availableTimes}
+                                selectedTime={selectedTime}
+                                onSelectTime={setSelectedTime}
+                            />
+
                         )}
                     </div>
                 )}
