@@ -2,6 +2,7 @@ package com.apiot.mediflow.sample;
 
 import com.apiot.mediflow.appointment.Appointment;
 import com.apiot.mediflow.appointment.AppointmentRepository;
+import com.apiot.mediflow.appointment.AppointmentStatus;
 import com.apiot.mediflow.barcodeGenerator.SampleCodeGenerator;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
@@ -47,6 +48,9 @@ public class SampleService {
                 .toList();
 
         sample.setSampleTests(tests);
+
+        appointment.setStatus(AppointmentStatus.CONFIRMED);
+        sample.setAppointment(appointment);
 
         Sample savedSample = sampleRepository.save(sample);
 

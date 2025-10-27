@@ -12,7 +12,10 @@ import java.time.LocalDateTime;
 public class AppointmentResponseDto {
     private Long id;
     private LocalDateTime date;
-    private Long referralId;
+    private String referralNumber;
     private Long collectionPointId;
+    private String status;
+    private String patientName;
+    private String pesel;
 
 }

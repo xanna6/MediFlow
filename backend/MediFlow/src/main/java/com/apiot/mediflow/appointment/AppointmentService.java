@@ -110,8 +110,12 @@ public class AppointmentService {
         AppointmentResponseDto appointmentResponseDto = new AppointmentResponseDto();
         appointmentResponseDto.setId(appointment.getId());
         appointmentResponseDto.setDate(appointment.getDate());
-        appointmentResponseDto.setReferralId(appointment.getReferral().getId());
+        appointmentResponseDto.setStatus(appointment.getStatus().toString());
+        appointmentResponseDto.setReferralNumber(appointment.getReferral().getReferralNumber());
         appointmentResponseDto.setCollectionPointId(appointment.getCollectionPoint().getId());
+        appointmentResponseDto.setPatientName(appointment.getReferral().getPatient().getFirstName().concat(" ")
+                .concat(appointment.getReferral().getPatient().getLastName()));
+        appointmentResponseDto.setPesel(appointment.getReferral().getPatient().getPesel());
         return appointmentResponseDto;
     }
 

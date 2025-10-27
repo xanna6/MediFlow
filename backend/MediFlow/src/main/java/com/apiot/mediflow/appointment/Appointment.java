@@ -22,6 +22,9 @@ public class Appointment {
 
     private LocalDateTime date;
 
+    @Enumerated(EnumType.STRING)
+    private AppointmentStatus status;
+
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "referral_id", nullable = false)
     @JsonIgnore
