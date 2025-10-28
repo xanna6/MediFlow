@@ -63,6 +63,11 @@ public class SampleService {
         return mapSampleToSampleDto(sample);
     }
 
+    protected List<SampleResponseDto> getAllSamples() {
+        List<Sample> samples = sampleRepository.findAll();
+        return samples.stream().map(this::mapSampleToSampleDto).collect(Collectors.toList());
+    }
+
     @Transactional
     protected SampleResponseDto updateSampleResults(UpdateSampleResultsDto dto) {
         Sample sample = sampleRepository.findById(dto.getSampleId())

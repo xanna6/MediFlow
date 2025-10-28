@@ -4,6 +4,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/samples")
 public class SampleController {
@@ -35,5 +37,11 @@ public class SampleController {
 
         SampleResponseDto updatedSample = sampleService.updateSampleResults(dto);
         return ResponseEntity.status(HttpStatus.OK).body(updatedSample);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<SampleResponseDto>> getAllSamples() {
+        List<SampleResponseDto> sampleResponseDtos = sampleService.getAllSamples();
+        return ResponseEntity.status(HttpStatus.OK).body(sampleResponseDtos);
     }
 }
