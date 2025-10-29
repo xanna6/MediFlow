@@ -15,5 +15,6 @@ public class SampleResponseDto {
     private Long id;
     private String sampleCode;
     private LocalDateTime createdAt;
+    private String status;
     private List<SampleTestDto> sampleTestDtos;
 }

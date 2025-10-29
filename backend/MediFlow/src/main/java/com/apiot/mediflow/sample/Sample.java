@@ -28,8 +28,10 @@ public class Sample {
     private Appointment appointment;
 
     private String sampleCode;
-
     private LocalDateTime collectionDate;
+
+    @Enumerated(EnumType.STRING)
+    private SampleStatus status = SampleStatus.CREATED;
 
     @OneToMany(mappedBy = "sample", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SampleTest> sampleTests = new ArrayList<>();

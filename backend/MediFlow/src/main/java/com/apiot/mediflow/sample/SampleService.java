@@ -84,9 +84,22 @@ public class SampleService {
             }
         }
 
+        updateSampleStatus(sample);
         Sample updatedSample = sampleRepository.save(sample);
 
         return mapSampleToSampleDto(updatedSample);
+    }
+
+    private void updateSampleStatus(Sample sample) {
+        List<SampleTest> sampleTests = sample.getSampleTests();
+
+        if (sampleTests.isEmpty()) {
+            sample.setStatus(SampleStatus.CREATED);
+        } else if (sampleTests.stream().allMatch(r -> r.getResult() != null && !r.getResult().isEmpty())) {
+            sample.setStatus(SampleStatus.COMPLETED);
+        } else {
+            sample.setStatus(SampleStatus.IN_PROGRESS);
+        }
     }
 
     private SampleResponseDto mapSampleToSampleDto(Sample sample) {
@@ -94,6 +107,7 @@ public class SampleService {
         sampleResponseDto.setId(sample.getId());
         sampleResponseDto.setSampleCode(sample.getSampleCode());
         sampleResponseDto.setCreatedAt(sample.getCollectionDate());
+        sampleResponseDto.setStatus(sample.getStatus().toString());
         sampleResponseDto.setSampleTestDtos(sample
                 .getSampleTests()
                 .stream()
