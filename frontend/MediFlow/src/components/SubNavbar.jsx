@@ -11,7 +11,10 @@ export default function SubNavbar() {
                                  className={({isActive}) => isActive ? "active" : ""}>Skierowania</NavLink></li>
                     <li><NavLink to="/make-appointment" className={({isActive}) => isActive ? "active" : ""}>Umów
                         wizytę</NavLink></li>
-                    <li><NavLink to="/appointments" className={({isActive}) => isActive ? "active" : ""}>Wizyty</NavLink></li>
+                    <li><NavLink to="/appointments"
+                                 className={({isActive}) => isActive ? "active" : ""}>Wizyty</NavLink></li>
+                    <li><NavLink to="/samples"
+                                 className={({isActive}) => isActive ? "active" : ""}>Próbki</NavLink></li>
                     <li><NavLink to="/results" className={({isActive}) => isActive ? "active" : ""}>Wyniki</NavLink>
                     </li>
                 </ul>
