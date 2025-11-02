@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
 import "../styles/Samples.css";
+import SampleResultsModal from "./SampleResults.jsx"
 
 export default function Samples() {
     const [samples, setSamples] = useState([]);
+    const [selectedSample, setSelectedSample] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
 
@@ -25,9 +27,25 @@ export default function Samples() {
         fetchSamples();
     }, []);
 
-    const handleFillResults = (sampleId) => {
-        // TODO: otwórz modal lub przejdź do formularza
-        alert(`Otwieram formularz wyników dla próbki #${sampleId}`);
+    const handleFillResults = async (sampleId) => {
+        setLoading(true);
+        try {
+            const res = await fetch(`/api/samples/${sampleId}`);
+            if (!res.ok) throw new Error("Nie udało się pobrać danych próbki.");
+            const data = await res.json();
+
+            setSelectedSample(data);
+        } catch (err) {
+            alert(err.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleResultsSaved = (updatedSample) => {
+        setSamples((prev) =>
+            prev.map((s) => (s.id === updatedSample.id ? updatedSample : s))
+        );
     };
 
     return (
@@ -69,6 +87,13 @@ export default function Samples() {
                     ))}
                     </tbody>
                 </table>
+            )}
+            {selectedSample && (
+                <SampleResultsModal
+                    sample={selectedSample}
+                    onResultsSaved={handleResultsSaved}
+                    onClose={() => setSelectedSample(null)}
+                />
             )}
         </div>
     );
