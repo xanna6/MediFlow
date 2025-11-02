@@ -28,7 +28,7 @@ public class SampleController {
         return ResponseEntity.status(HttpStatus.OK).body(sampleResponseDto);
     }
 
-    @PutMapping("/{id}/results")
+    @PostMapping("/{id}/results")
     public ResponseEntity<SampleResponseDto> updateSampleResults(@PathVariable Long id, @RequestBody UpdateSampleResultsDto dto) {
 
         if (!dto.getSampleId().equals(id)) {

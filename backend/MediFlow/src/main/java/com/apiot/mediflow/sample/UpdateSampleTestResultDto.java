@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class UpdateSampleTestResultDto {
 
-    private Long sampleTestId;
+    private Long id;
     private String result;
 }

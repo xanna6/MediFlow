@@ -74,7 +74,7 @@ public class SampleService {
                 .orElseThrow(() -> new RuntimeException("Sample not found"));
 
         Map<Long, String> resultsMap = dto.getTests().stream()
-                .collect(Collectors.toMap(UpdateSampleTestResultDto::getSampleTestId,
+                .collect(Collectors.toMap(UpdateSampleTestResultDto::getId,
                         UpdateSampleTestResultDto::getResult));
 
         for (SampleTest st : sample.getSampleTests()) {
