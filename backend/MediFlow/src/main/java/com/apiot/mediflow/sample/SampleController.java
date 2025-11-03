@@ -1,5 +1,6 @@
 package com.apiot.mediflow.sample;
 
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,6 +27,18 @@ public class SampleController {
     public ResponseEntity<SampleResponseDto> getSampleById(@PathVariable long id) {
         SampleResponseDto sampleResponseDto = sampleService.getSampleById(id);
         return ResponseEntity.status(HttpStatus.OK).body(sampleResponseDto);
+    }
+
+    @GetMapping("/by-code")
+    public ResponseEntity<SampleResponseDto> getSampleByPeselAndSampleCode(@RequestParam String pesel, @RequestParam String sampleCode) {
+        try {
+            SampleResponseDto response = sampleService.getSampleByPeselAndSampleCode(pesel, sampleCode);
+            return ResponseEntity.ok(response);
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
+        }
     }
 
     @PostMapping("/{id}/results")

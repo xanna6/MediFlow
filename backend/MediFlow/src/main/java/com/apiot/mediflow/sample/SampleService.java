@@ -63,6 +63,16 @@ public class SampleService {
         return mapSampleToSampleDto(sample);
     }
 
+    public SampleResponseDto getSampleByPeselAndSampleCode(String pesel, String sampleCode) {
+        Sample sample = sampleRepository.findByPatientPeselAndSampleCode(pesel, sampleCode)
+                .orElseThrow(() -> new RuntimeException("Sample not found for provided data"));
+
+        if (sample.getStatus() != SampleStatus.COMPLETED) {
+            throw new IllegalStateException("Results for this sample are not yet available");
+        }
+        return mapSampleToSampleDto(sample);
+    }
+
     protected List<SampleResponseDto> getAllSamples() {
         List<Sample> samples = sampleRepository.findAll();
         return samples.stream().map(this::mapSampleToSampleDto).collect(Collectors.toList());
@@ -127,4 +137,5 @@ public class SampleService {
         sampleTestDto.setResultDate(sampleTest.getResultDate());
         return sampleTestDto;
     }
+
 }
