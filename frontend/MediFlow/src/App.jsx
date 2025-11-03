@@ -5,6 +5,7 @@ import Referrals from "./pages/Referrals";
 import CollectionPoints from "./pages/CollectionPoints.jsx";
 import Appointments from "./pages/Appointments.jsx";
 import Samples from "./pages/Samples.jsx"
+import Results from "./pages/Results.jsx"
 
 function App() {
     return (
@@ -15,6 +16,7 @@ function App() {
                 <Route path="/make-appointment" element={<CollectionPoints />} />
                 <Route path="/appointments" element={<Appointments />} />
                 <Route path="/samples" element={<Samples />} />
+                <Route path="/results" element={<Results />} />
             </Routes>
         </Layout>
     );
