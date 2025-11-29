@@ -1,7 +1,9 @@
 package com.apiot.mediflow.sample;
 
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -50,6 +52,23 @@ public class SampleController {
 
         SampleResponseDto updatedSample = sampleService.updateSampleResults(dto);
         return ResponseEntity.status(HttpStatus.OK).body(updatedSample);
+    }
+
+    @GetMapping("/{id}/results/pdf")
+    public ResponseEntity<byte[]> getSampleResultsPdf(@PathVariable Long id) {
+        byte[] pdfData = sampleService.generateSampleResultsPdf(id);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        headers.setContentDispositionFormData(
+                "attachment",
+                "wyniki-probki-" + id + ".pdf"
+        );
+
+        return ResponseEntity
+                .ok()
+                .headers(headers)
+                .body(pdfData);
     }
 
     @GetMapping

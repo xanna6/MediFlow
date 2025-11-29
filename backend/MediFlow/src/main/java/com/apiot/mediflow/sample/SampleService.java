@@ -4,13 +4,24 @@ import com.apiot.mediflow.appointment.Appointment;
 import com.apiot.mediflow.appointment.AppointmentRepository;
 import com.apiot.mediflow.appointment.AppointmentStatus;
 import com.apiot.mediflow.barcodeGenerator.SampleCodeGenerator;
+import com.apiot.mediflow.users.Patient;
 import jakarta.transaction.Transactional;
+import org.openpdf.text.*;
+import org.openpdf.text.Font;
+import org.openpdf.text.pdf.PdfPCell;
+import org.openpdf.text.pdf.PdfPTable;
+import org.openpdf.text.pdf.PdfWriter;
 import org.springframework.stereotype.Service;
 
+import java.awt.*;
+import java.io.ByteArrayOutputStream;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class SampleService {
@@ -110,6 +121,66 @@ public class SampleService {
         } else {
             sample.setStatus(SampleStatus.IN_PROGRESS);
         }
+    }
+
+    public byte[] generateSampleResultsPdf(Long sampleId) {
+        Sample sample = sampleRepository.findById(sampleId)
+                .orElseThrow(() -> new RuntimeException("Nie znaleziono próbki."));
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        Document document = new Document(PageSize.A4, 50, 50, 50, 50);
+        PdfWriter.getInstance(document, out);
+        document.open();
+
+        Font titleFont = new Font(Font.HELVETICA, 18, Font.BOLD, Color.BLUE);
+        Font subtitleFont = new Font(Font.HELVETICA, 12, Font.NORMAL, Color.DARK_GRAY);
+        Font tableHeaderFont = new Font(Font.HELVETICA, 12, Font.BOLD, Color.WHITE);
+
+        Paragraph title = new Paragraph(sample.getAppointment().getCollectionPoint().getName(), titleFont);
+        title.setAlignment(Element.ALIGN_CENTER);
+        document.add(title);
+
+        Paragraph subtitle = new Paragraph("Raport wyników badań laboratoryjnych", subtitleFont);
+        subtitle.setAlignment(Element.ALIGN_CENTER);
+        document.add(subtitle);
+        document.add(new Paragraph(" "));
+
+        document.add(new Paragraph("Numer próbki: " + sample.getSampleCode()));
+        document.add(new Paragraph("Data utworzenia: " + sample.getCollectionDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))));
+        document.add(new Paragraph("Status: " + sample.getStatus()));
+        document.add(new Paragraph(" "));
+
+        Patient patient = sample.getAppointment().getReferral().getPatient();
+
+        document.add(new Paragraph("Imię: " + patient.getFirstName()));
+        document.add(new Paragraph("Nazwisko: " + patient.getLastName()));
+        document.add(new Paragraph("Pesel: " + patient.getPesel()));
+        document.add(new Paragraph(" "));
+
+        PdfPTable table = new PdfPTable(4);
+        table.setWidthPercentage(100);
+        Stream.of("Badanie", "Wynik", "Jednostka", "Norma")
+                .forEach(col -> {
+                    PdfPCell cell = new PdfPCell(new Phrase(col, tableHeaderFont));
+                    cell.setBackgroundColor(new Color(0, 102, 204));
+                    cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                    table.addCell(cell);
+                });
+
+        sample.getSampleTests().forEach(test -> {
+            table.addCell(test.getMedicalTest().getName());
+            table.addCell(test.getResult() != null ? test.getResult() : "-");
+            table.addCell(test.getUnit());
+            table.addCell(test.getStandard());
+        });
+
+        document.add(table);
+
+        document.add(new Paragraph("\nPodpis: ........................................"));
+        document.add(new Paragraph("Data wydruku: " + LocalDate.now()));
+
+        document.close();
+        return out.toByteArray();
     }
 
     private SampleResponseDto mapSampleToSampleDto(Sample sample) {
