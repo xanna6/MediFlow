@@ -32,6 +32,23 @@ export default function ResultsDownloadPage() {
         }
     };
 
+    const handleDownloadPdf = async () => {
+        const res = await fetch(`/api/samples/${sample.id}/results/pdf`);
+        if (!res.ok) {
+            alert("Nie udało się pobrać pliku PDF.");
+            return;
+        }
+
+        const blob = await res.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `wyniki-${sample.sampleCode}.pdf`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+    };
+
     return (
         <div className="results-download-container">
             <h2>Pobierz wyniki badań</h2>
@@ -86,6 +103,10 @@ export default function ResultsDownloadPage() {
                         ))}
                         </tbody>
                     </table>
+
+                    <button className="download-btn" onClick={handleDownloadPdf}>
+                        Pobierz PDF
+                    </button>
 
                 </div>
             )}
