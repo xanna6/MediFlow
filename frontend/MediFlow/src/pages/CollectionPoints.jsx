@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "../styles/CollectionPoints.css";
 import AppointmentModal from "./AppointmentModal.jsx";
+import CollectionPointsMap from "./CollectionPointsMap.jsx";
 
 export default function CollectionPoints() {
     const [points, setPoints] = useState([]);
@@ -62,28 +63,47 @@ export default function CollectionPoints() {
                 />
             </div>
 
-            {filteredPoints.length === 0 ? (
-                <p>Brak punktów spełniających kryteria.</p>
-            ) : (
+            <div className="points-layout">
+
                 <div className="points-list">
-                    {filteredPoints.map((point) => (
-                        <div key={point.id} className="point-card">
-                            <div className="point-info">
-                                <h3>{point.name}</h3>
-                                <p>
-                                    {point.street}, {point.postalCode} {point.city}
-                                </p>
-                                <p>
-                                    <strong>Godziny otwarcia:</strong> {formatTime(point.openedFrom)} - {formatTime(point.openedTo)}
-                                </p>
+                    {filteredPoints.length === 0 ? (
+                        <p>Brak punktów spełniających kryteria.</p>
+                    ) : (
+                        filteredPoints.map((point) => (
+                            <div
+                                key={point.id}
+                                className={`point-card ${
+                                    selectedPoint?.id === point.id ? "selected" : ""
+                                }`}
+                            >
+                                <div className="point-info">
+                                    <h3>{point.name}</h3>
+                                    <p>
+                                        {point.street}, {point.postalCode} {point.city}
+                                    </p>
+                                    <p>
+                                        <strong>Godziny otwarcia:</strong>{" "}
+                                        {formatTime(point.openedFrom)} -{" "}
+                                        {formatTime(point.openedTo)}
+                                    </p>
+                                </div>
+                                <div className="point-actions">
+                                    <button onClick={() => handleSelect(point)}>
+                                        Wybierz
+                                    </button>
+                                </div>
                             </div>
-                            <div className="point-actions">
-                                <button onClick={() => handleSelect(point)}>Wybierz</button>
-                            </div>
-                        </div>
-                    ))}
+                        ))
+                    )}
                 </div>
-            )}
+
+                <CollectionPointsMap
+                    points={filteredPoints}
+                    selectedPoint={selectedPoint}
+                    onSelect={handleSelect}
+                />
+
+            </div>
 
             {selectedPoint && (
                 <AppointmentModal
