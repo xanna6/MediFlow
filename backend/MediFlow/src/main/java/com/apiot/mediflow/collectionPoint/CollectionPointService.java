@@ -30,6 +30,8 @@ public class CollectionPointService {
         collectionPointDto.setPostalCode(collectionPoint.getPostalCode());
         collectionPointDto.setOpenedFrom(collectionPoint.getOpenedFrom());
         collectionPointDto.setOpenedTo(collectionPoint.getOpenedTo());
+        collectionPointDto.setLatitude(collectionPoint.getLatitude());
+        collectionPointDto.setLongitude(collectionPoint.getLongitude());
         return collectionPointDto;
     }
 }

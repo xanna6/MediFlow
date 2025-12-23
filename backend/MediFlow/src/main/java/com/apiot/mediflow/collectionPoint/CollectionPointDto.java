@@ -18,4 +18,6 @@ public class CollectionPointDto {
     private String postalCode;
     private LocalTime openedFrom;
     private LocalTime openedTo;
+    private float latitude;
+    private float longitude;
 }
