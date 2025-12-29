@@ -1,5 +1,5 @@
 .collection-points-container {
-    max-width: 800px;
+    max-width: 1000px;
     margin: 0 auto;
     padding: 20px;
 }
@@ -21,13 +21,14 @@
     padding: 8px;
     border: 1px solid #ccc;
     border-radius: 6px;
+    width: 50%;
 }
 
 .points-list {
     display: flex;
     flex-direction: column;
     gap: 14px;
-    width: 40%;
+    width: 50%;
     overflow-y: auto;
     padding-right: 8px;
 }
@@ -39,54 +40,85 @@
 }
 
 .points-map {
-    width: 60%;
+    width: 50%;
     border-radius: 12px;
     overflow: hidden;
-}
-
-.point-card.selected {
-    border: 2px solid #007acc;
-    background: #e6f2ff;
 }
 
 .point-card {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start;
+    gap: 16px;
+
     background: #f9fcff;
-    border: 1px solid #d0e6f7;
-    border-radius: 10px;
-    padding: 14px 18px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-    transition: background 0.2s ease;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 14px;
+
+    border: 1px solid #d6e6f7;
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
 }
 
-.point-card:hover {
-    background: #eef7ff;
+.point-card.selected {
+    border-color: #007acc;
 }
 
-.point-info h3 {
+.point-card-left {
+    flex: 1;
+}
+
+.point-name {
     margin: 0;
-    color: #004f88;
+    font-size: 1.05rem;
+    color: #004a7c;
 }
 
-.point-info p {
-    margin: 4px 0;
+.point-address {
+    margin: 10px 0;
+    color: #555;
+    font-size: 0.95rem;
+}
+
+.point-hours {
+    font-size: 0.9rem;
     color: #333;
 }
 
-.point-actions button {
-    background: #007acc;
-    color: white;
-    border: none;
-    padding: 8px 12px;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: background 0.2s;
+.point-card-right {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-width: 150px;
+    align-self: flex-end;
 }
 
-.point-actions button:hover {
-    background: #005f99;
+.point-card-right button {
+    width: 100%;
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-weight: 500;
+    margin-top: 10px;
+}
+
+.map-btn {
+    background-color: #e3f2fd;
+    color: #004a7c;
+}
+
+.map-btn:hover {
+    background-color: #cfe8fb;
+}
+
+.select-btn {
+    background-color: #007acc;
+    color: #fff;
+}
+
+.select-btn:hover {
+    background-color: #005fa3;
 }
 
 .selected-info {

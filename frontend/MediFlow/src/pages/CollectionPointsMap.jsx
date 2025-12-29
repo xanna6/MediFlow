@@ -1,6 +1,7 @@
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
+import React from "react";
 
 const defaultIcon = new L.Icon({
     iconUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png",
@@ -20,9 +21,15 @@ const selectedIcon = new L.Icon({
 
 function FlyToPoint({ point }) {
     const map = useMap();
-    if (point) {
-        map.flyTo([point.latitude, point.longitude], 15, { duration: 1 });
-    }
+
+    React.useEffect(() => {
+        if (point?.latitude && point?.longitude) {
+            map.flyTo([point.latitude, point.longitude], 15, {
+                duration: 1,
+            });
+        }
+    }, [point, map]);
+
     return null;
 }
 
