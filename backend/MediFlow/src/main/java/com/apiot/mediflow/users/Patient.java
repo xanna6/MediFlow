@@ -23,6 +23,7 @@ public class Patient {
     private String pesel;
     private LocalDate birthDate;
     private Long phoneNumber;
+    private String email;
 
     @OneToOne
     @JoinColumn(name = "user_id")

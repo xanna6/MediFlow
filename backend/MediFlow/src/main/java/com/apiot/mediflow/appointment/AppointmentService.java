@@ -2,6 +2,7 @@ package com.apiot.mediflow.appointment;
 
 import com.apiot.mediflow.collectionPoint.CollectionPoint;
 import com.apiot.mediflow.collectionPoint.CollectionPointRepository;
+import com.apiot.mediflow.mail.EmailService;
 import com.apiot.mediflow.referral.Referral;
 import com.apiot.mediflow.referral.ReferralRepository;
 import com.apiot.mediflow.users.Patient;
@@ -25,13 +26,16 @@ public class AppointmentService {
     private final ReferralRepository referralRepository;
     private final CollectionPointRepository collectionPointRepository;
     private final PatientRepository patientRepository;
+    private final EmailService emailService;
 
     public AppointmentService(AppointmentRepository appointmentRepository, ReferralRepository referralRepository,
-                              CollectionPointRepository collectionPointRepository, PatientRepository patientRepository) {
+                              CollectionPointRepository collectionPointRepository, PatientRepository patientRepository,
+                              EmailService emailService) {
         this.appointmentRepository = appointmentRepository;
         this.referralRepository = referralRepository;
         this.collectionPointRepository = collectionPointRepository;
         this.patientRepository = patientRepository;
+        this.emailService = emailService;
     }
 
     @Transactional
@@ -60,6 +64,15 @@ public class AppointmentService {
         Appointment appointment = mapAppointmentRequestDtoToAppointment(appointmentRequestDto, referral, collectionPoint);
 
         Appointment savedAppointment = appointmentRepository.save(appointment);
+
+        if (patient.getEmail() != null && !patient.getEmail().isBlank()) {
+            emailService.sendAppointmentConfirmation(
+                    patient.getEmail(),
+                    patient.getFirstName(),
+                    savedAppointment.getDate(),
+                    savedAppointment.getCollectionPoint().getName()
+            );
+        }
 
         return mapAppointmentToAppointmentResponseDto(savedAppointment);
     }
@@ -125,6 +138,7 @@ public class AppointmentService {
         appointment.setDate(appointmentRequestDto.getDate());
         appointment.setReferral(referral);
         appointment.setCollectionPoint(collectionPoint);
+        appointment.setStatus(AppointmentStatus.SCHEDULED);
         return appointment;
     }
 
