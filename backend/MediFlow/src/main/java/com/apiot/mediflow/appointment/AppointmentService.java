@@ -66,7 +66,7 @@ public class AppointmentService {
         Appointment savedAppointment = appointmentRepository.save(appointment);
 
         if (patient.getEmail() != null && !patient.getEmail().isBlank()) {
-            emailService.sendAppointmentConfirmation(
+            emailService.sendAppointmentConfirmationMail(
                     patient.getEmail(),
                     patient.getFirstName(),
                     savedAppointment.getDate(),
