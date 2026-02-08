@@ -6,6 +6,7 @@ import CollectionPoints from "./pages/CollectionPoints.jsx";
 import Appointments from "./pages/Appointments.jsx";
 import Samples from "./pages/Samples.jsx"
 import Results from "./pages/Results.jsx"
+import Login from "./pages/Login.jsx"
 
 function App() {
     return (
@@ -17,6 +18,7 @@ function App() {
                 <Route path="/appointments" element={<Appointments />} />
                 <Route path="/samples" element={<Samples />} />
                 <Route path="/results" element={<Results />} />
+                <Route path="/login" element={<Login />} />
             </Routes>
         </Layout>
     );
