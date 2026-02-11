@@ -96,9 +96,18 @@ input, select {
   border-radius: 6px;
   transition: background-color 0.2s ease;
   text-decoration: none;
+  width: 100px;
+  margin-top: 0;
+  display: inline-block;
 }
 
 .login-btn:hover {
   background-color: #bfdbfe;
   font-weight: 600;
+}
+
+button.login-btn {
+  appearance: none;
+  -webkit-appearance: none;
+  font-size: inherit;
 }

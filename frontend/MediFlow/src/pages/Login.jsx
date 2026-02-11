@@ -9,7 +9,7 @@ export default function LoginPage() {
     const [message, setMessage] = useState("");
     const [loading, setLoading] = useState(false);
 
-    const { setUser } = useAuth();
+    const { login } = useAuth();
     const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
@@ -32,14 +32,9 @@ export default function LoginPage() {
             const { token } = await res.json();
             localStorage.setItem("token", token);
 
-            const payload = JSON.parse(atob(token.split(".")[1]));
+            login(token);
 
-            setUser({
-                username: payload.sub,
-                roles: payload.roles || [],
-            });
-
-            navigate("/"); // po loginie
+            navigate("/");
         } catch (err) {
             console.error(err);
             setMessage("Błąd połączenia z serwerem");
