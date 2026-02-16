@@ -7,16 +7,24 @@ import Appointments from "./pages/Appointments.jsx";
 import Samples from "./pages/Samples.jsx"
 import Results from "./pages/Results.jsx"
 import Login from "./pages/Login.jsx"
+import RoleRoute from "./auth/RoleRoute";
+
 
 function App() {
     return (
         <Layout>
             <Routes>
                 <Route path="/" element={<MainPage />} />
-                <Route path="/referrals" element={<Referrals />} />
+                <Route path="/referrals" element={<RoleRoute roles={["ROLE_DOCTOR"]}>
+                    <Referrals />
+                </RoleRoute>} />
                 <Route path="/make-appointment" element={<CollectionPoints />} />
-                <Route path="/appointments" element={<Appointments />} />
-                <Route path="/samples" element={<Samples />} />
+                <Route path="/appointments" element={<RoleRoute roles={["ROLE_LAB"]}>
+                    <Appointments />
+                </RoleRoute>} />
+                <Route path="/samples" element={ <RoleRoute roles={["ROLE_LAB"]}>
+                    <Samples />
+                </RoleRoute>} />
                 <Route path="/results" element={<Results />} />
                 <Route path="/login" element={<Login />} />
             </Routes>

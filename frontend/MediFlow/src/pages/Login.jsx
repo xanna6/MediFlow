@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { useAuth } from "../auth/AuthContext";
 import "../styles/AppointmentModal.css";
 
@@ -10,7 +9,6 @@ export default function LoginPage() {
     const [loading, setLoading] = useState(false);
 
     const { login } = useAuth();
-    const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -34,7 +32,6 @@ export default function LoginPage() {
 
             login(token);
 
-            navigate("/");
         } catch (err) {
             console.error(err);
             setMessage("Błąd połączenia z serwerem");

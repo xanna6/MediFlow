@@ -1,4 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
+import {useNavigate} from "react-router-dom";
+import {getDefaultRouteForRole} from "./AuthRedirect.js";
 
 const AuthContext = createContext(null);
 
@@ -21,13 +23,19 @@ export function AuthProvider({ children }) {
         return user?.roles?.includes(role);
     };
 
+    const navigate = useNavigate();
+
     const login = (token) => {
         localStorage.setItem("token", token);
         const payload = JSON.parse(atob(token.split(".")[1]));
-        setUser({
+        const newUser = {
             username: payload.sub,
             roles: payload.roles || [],
-        });
+        };
+
+        setUser(newUser);
+        const redirectPath = getDefaultRouteForRole(newUser);
+        navigate(redirectPath, { replace: true });
     };
 
     const logout = () => {

@@ -6,10 +6,11 @@ import "./styles/index.css";
 import { AuthProvider } from "./auth/AuthContext";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
-    <AuthProvider>
-        <BrowserRouter>
+    <BrowserRouter>
+        <AuthProvider>
             <App />
-        </BrowserRouter>
-    </AuthProvider>
+        </AuthProvider>
+    </BrowserRouter>
+
 );
 
