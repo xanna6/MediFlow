@@ -3,7 +3,10 @@ package com.apiot.mediflow.sample;
 import com.apiot.mediflow.appointment.Appointment;
 import com.apiot.mediflow.appointment.AppointmentRepository;
 import com.apiot.mediflow.appointment.AppointmentStatus;
+import com.apiot.mediflow.auth.User;
+import com.apiot.mediflow.auth.UserRepository;
 import com.apiot.mediflow.barcodeGenerator.SampleCodeGenerator;
+import com.apiot.mediflow.users.LabEmployee;
 import com.apiot.mediflow.users.Patient;
 import jakarta.transaction.Transactional;
 import org.openpdf.text.*;
@@ -11,6 +14,7 @@ import org.openpdf.text.Font;
 import org.openpdf.text.pdf.PdfPCell;
 import org.openpdf.text.pdf.PdfPTable;
 import org.openpdf.text.pdf.PdfWriter;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.awt.*;
@@ -28,12 +32,14 @@ public class SampleService {
 
     private final SampleRepository sampleRepository;
     private final AppointmentRepository appointmentRepository;
+    private final UserRepository userRepository;
     private final SampleCodeGenerator sampleCodeGenerator;
 
     public SampleService(SampleRepository sampleRepository, AppointmentRepository appointmentRepository,
-                         SampleCodeGenerator sampleCodeGenerator) {
+                         UserRepository userRepository, SampleCodeGenerator sampleCodeGenerator) {
         this.sampleRepository = sampleRepository;
         this.appointmentRepository = appointmentRepository;
+        this.userRepository = userRepository;
         this.sampleCodeGenerator = sampleCodeGenerator;
     }
 
@@ -62,6 +68,18 @@ public class SampleService {
 
         appointment.setStatus(AppointmentStatus.CONFIRMED);
         sample.setAppointment(appointment);
+
+        String username =
+                SecurityContextHolder
+                        .getContext()
+                        .getAuthentication()
+                        .getName();
+
+        User user =  userRepository.findByUsername(username)
+                .orElseThrow();
+
+        LabEmployee labEmployee = user.getLabEmployee();
+        sample.setLabEmployee(labEmployee);
 
         Sample savedSample = sampleRepository.save(sample);
 
@@ -147,7 +165,6 @@ public class SampleService {
 
         document.add(new Paragraph("Numer próbki: " + sample.getSampleCode()));
         document.add(new Paragraph("Data utworzenia: " + sample.getCollectionDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))));
-        document.add(new Paragraph("Status: " + sample.getStatus()));
         document.add(new Paragraph(" "));
 
         Patient patient = sample.getAppointment().getReferral().getPatient();
@@ -162,7 +179,7 @@ public class SampleService {
         Stream.of("Badanie", "Wynik", "Jednostka", "Norma")
                 .forEach(col -> {
                     PdfPCell cell = new PdfPCell(new Phrase(col, tableHeaderFont));
-                    cell.setBackgroundColor(new Color(0, 102, 204));
+                    cell.setBackgroundColor(new Color(224, 242, 254));
                     cell.setHorizontalAlignment(Element.ALIGN_CENTER);
                     table.addCell(cell);
                 });

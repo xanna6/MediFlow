@@ -1,6 +1,7 @@
 package com.apiot.mediflow.sample;
 
 import com.apiot.mediflow.appointment.Appointment;
+import com.apiot.mediflow.users.LabEmployee;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -35,4 +36,10 @@ public class Sample {
 
     @OneToMany(mappedBy = "sample", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SampleTest> sampleTests = new ArrayList<>();
+
+    @ManyToOne
+    @JoinColumn(name = "lab_employee_id")
+    @JsonIgnore
+    @ToString.Exclude
+    private LabEmployee labEmployee;
 }
