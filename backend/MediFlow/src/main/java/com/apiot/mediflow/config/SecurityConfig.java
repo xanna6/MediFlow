@@ -2,6 +2,7 @@ package com.apiot.mediflow.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -39,6 +40,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/collection-points/**").permitAll()
                         .requestMatchers("/api/samples/*/results/**").permitAll()
                         .requestMatchers("/api/samples/**").hasRole("LAB")
+                        .requestMatchers("/api/appointments/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/appointments/**").hasRole("LAB")
                         .requestMatchers("/api/referrals/**").hasRole("DOCTOR")
                         .anyRequest().authenticated()
                 )
