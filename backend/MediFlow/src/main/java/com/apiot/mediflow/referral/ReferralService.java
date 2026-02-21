@@ -1,5 +1,7 @@
 package com.apiot.mediflow.referral;
 
+import com.apiot.mediflow.auth.User;
+import com.apiot.mediflow.auth.UserRepository;
 import com.apiot.mediflow.referralNumberGenerator.ReferralNumberGenerator;
 import com.apiot.mediflow.test.MedicalTest;
 import com.apiot.mediflow.test.MedicalTestRepository;
@@ -10,6 +12,7 @@ import com.apiot.mediflow.users.PatientRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
@@ -25,7 +28,7 @@ public class ReferralService {
 
     private final ReferralRepository referralRepository;
     private final MedicalTestRepository medicalTestRepository;
-    private final DoctorRepository doctorRepository;
+    private final UserRepository userRepository;
     private final PatientRepository patientRepository;
     private final ReferralNumberGenerator referralNumberGenerator;
 
@@ -52,8 +55,16 @@ public class ReferralService {
          
          referral.setMedicalTests(tests);
 
-         Doctor doctor = doctorRepository.findById(referralCreateDto.getDoctorId())
-                 .orElseThrow(() -> new EntityNotFoundException("Doctor with id " + referralCreateDto.getDoctorId() + " not found"));
+         String username =
+                 SecurityContextHolder
+                         .getContext()
+                         .getAuthentication()
+                         .getName();
+
+         User user =  userRepository.findByUsername(username)
+                 .orElseThrow();
+
+         Doctor doctor = user.getDoctor();
 
          Patient patient = patientRepository.findByPesel(referralCreateDto.getPatientDto().getPesel())
                  .orElseGet(() -> patientRepository.save(new Patient(

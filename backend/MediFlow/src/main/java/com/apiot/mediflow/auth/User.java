@@ -1,6 +1,7 @@
 package com.apiot.mediflow.auth;
 
 import com.apiot.mediflow.users.Doctor;
+import com.apiot.mediflow.users.LabEmployee;
 import com.apiot.mediflow.users.Patient;
 import com.apiot.mediflow.users.Role;
 import jakarta.persistence.*;
@@ -33,6 +34,9 @@ public class User implements UserDetails {
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private Doctor doctor;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    private LabEmployee labEmployee;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

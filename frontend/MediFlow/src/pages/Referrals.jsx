@@ -32,8 +32,13 @@ const ReferralForm = () => {
     const [selectedTests, setSelectedTests] = useState([]);
     const [message, setMessage] = useState("");
 
+    const token = localStorage.getItem("token");
+
     useEffect(() => {
-        fetch("/api/medical-tests/grouped")
+        fetch("/api/medical-tests/grouped",
+            {method: "GET",
+            headers: {Authorization: "Bearer " + token}
+        },)
             .then((res) => res.json())
             .then(setTests)
             .catch((err) => console.error("Błąd pobierania badań", err));
@@ -47,7 +52,10 @@ const ReferralForm = () => {
             setBirthDate(birthDateFromPesel);
         }
 
-        const res = await fetch(`/api/patients/by-pesel/${pesel}`);
+        const res = await fetch(`/api/patients/by-pesel/${pesel}`,
+            {method: "GET",
+            headers: {Authorization: "Bearer " + token}
+        });
         if (res.ok) {
             const data = await res.json();
             setFirstName(data.firstName);
@@ -73,13 +81,15 @@ const ReferralForm = () => {
         const payload = {
             patientDto: { firstName, lastName, pesel ,
                 birthDate: birthDate ? birthDate.toISOString().split("T")[0] : null },
-            doctorId: 1,
             medicalTestIds: selectedTests,
         };
 
         const res = await fetch("/api/referrals", {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: "Bearer " + token
+            },
             body: JSON.stringify(payload),
         });
 

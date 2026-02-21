@@ -14,9 +14,6 @@ import java.util.Set;
 public class ReferralCreateDto {
 
     @NotNull
-    private Long doctorId;
-
-    @NotNull
     private PatientDto patientDto;
 
     @NotEmpty
