@@ -5,6 +5,8 @@ export default function SampleResultsModal({ sample, onClose, onResultsSaved }) 
     const [results, setResults] = useState(sample.sampleTestDtos);
     const [changedResults, setChangedResults] = useState([]);
 
+    const token = localStorage.getItem("token");
+
     const handleChange = (id, value) => {
         setResults((prev) =>
             prev.map((r) => (r.id === id ? { ...r, result: value } : r))
@@ -33,7 +35,7 @@ export default function SampleResultsModal({ sample, onClose, onResultsSaved }) 
         try {
             const res = await fetch(`/api/samples/${sample.id}/results`, {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: { "Content-Type": "application/json" , Authorization: "Bearer " + token},
                 body: JSON.stringify(payload),
             });
 

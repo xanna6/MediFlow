@@ -10,11 +10,15 @@ export default function Appointments() {
     const [error, setError] = useState("");
     const [successMessage, setSuccessMessage] = useState("");
 
+    const token = localStorage.getItem("token");
+
     const fetchAppointments = async (date) => {
         try {
             setLoading(true);
             setError("");
-            const res = await fetch(`/api/appointments/day?date=${date}`);
+            const res = await fetch(`/api/appointments/day?date=${date}`,
+                {method: "GET",
+                    headers: {Authorization: "Bearer " + token}});
             if (!res.ok) throw new Error("Błąd podczas pobierania wizyt");
             const data = await res.json();
             setAppointments(data);
@@ -33,7 +37,7 @@ export default function Appointments() {
         try {
             const res = await fetch("/api/samples", {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: { "Content-Type": "application/json" , Authorization: "Bearer " + token},
                 body: JSON.stringify({ appointmentId }),
             });
             if (!res.ok) throw new Error("Nie udało się potwierdzić wizyty");

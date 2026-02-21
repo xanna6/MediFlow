@@ -8,12 +8,16 @@ export default function Samples() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
 
+    const token = localStorage.getItem("token")
+
     useEffect(() => {
         const fetchSamples = async () => {
             try {
                 setLoading(true);
                 setError("");
-                const res = await fetch("/api/samples");
+                const res = await fetch("/api/samples",
+                    {method: "GET",
+                    headers: {Authorization: "Bearer " + token}});
                 if (!res.ok) throw new Error("Błąd podczas pobierania próbek");
                 const data = await res.json();
                 setSamples(data);
@@ -30,7 +34,9 @@ export default function Samples() {
     const handleFillResults = async (sampleId) => {
         setLoading(true);
         try {
-            const res = await fetch(`/api/samples/${sampleId}`);
+            const res = await fetch(`/api/samples/${sampleId}`,
+                {method: "GET",
+                headers: {Authorization: "Bearer " + token}});
             if (!res.ok) throw new Error("Nie udało się pobrać danych próbki.");
             const data = await res.json();
 
