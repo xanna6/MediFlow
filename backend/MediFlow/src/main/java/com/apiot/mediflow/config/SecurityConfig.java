@@ -38,6 +38,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/collection-points/**").permitAll()
+                        .requestMatchers("/api/samples/by-code").permitAll()
                         .requestMatchers("/api/samples/*/results/**").permitAll()
                         .requestMatchers("/api/samples/**").hasRole("LAB")
                         .requestMatchers("/api/appointments/**").permitAll()

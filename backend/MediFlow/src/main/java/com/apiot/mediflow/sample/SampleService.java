@@ -6,6 +6,8 @@ import com.apiot.mediflow.appointment.AppointmentStatus;
 import com.apiot.mediflow.auth.User;
 import com.apiot.mediflow.auth.UserRepository;
 import com.apiot.mediflow.barcodeGenerator.SampleCodeGenerator;
+import com.apiot.mediflow.collectionPoint.CollectionPoint;
+import com.apiot.mediflow.users.Doctor;
 import com.apiot.mediflow.users.LabEmployee;
 import com.apiot.mediflow.users.Patient;
 import jakarta.transaction.Transactional;
@@ -150,7 +152,7 @@ public class SampleService {
         PdfWriter.getInstance(document, out);
         document.open();
 
-        Font titleFont = new Font(Font.HELVETICA, 18, Font.BOLD, Color.BLUE);
+        Font titleFont = new Font(Font.HELVETICA, 18, Font.BOLD, new Color(30,58,138));
         Font subtitleFont = new Font(Font.HELVETICA, 12, Font.NORMAL, Color.DARK_GRAY);
         Font tableHeaderFont = new Font(Font.HELVETICA, 12, Font.BOLD, Color.WHITE);
 
@@ -165,6 +167,12 @@ public class SampleService {
 
         document.add(new Paragraph("Numer próbki: " + sample.getSampleCode()));
         document.add(new Paragraph("Data utworzenia: " + sample.getCollectionDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))));
+        CollectionPoint collectionPoint = sample.getAppointment().getCollectionPoint();
+        document.add(new Paragraph("Miejsce pobrania: " + collectionPoint.getName() + ", ul." +
+                collectionPoint.getStreet() + ", " + collectionPoint.getPostalCode() + " " + collectionPoint.getCity()));
+        Doctor doctor = sample.getAppointment().getReferral().getDoctor();
+        document.add(new Paragraph("Zlecenie utworzone przez: " + doctor.getFirstname() + " " + doctor.getLastname() +
+                " (" + doctor.getSpecialization() + ")"));
         document.add(new Paragraph(" "));
 
         Patient patient = sample.getAppointment().getReferral().getPatient();
@@ -179,7 +187,7 @@ public class SampleService {
         Stream.of("Badanie", "Wynik", "Jednostka", "Norma")
                 .forEach(col -> {
                     PdfPCell cell = new PdfPCell(new Phrase(col, tableHeaderFont));
-                    cell.setBackgroundColor(new Color(224, 242, 254));
+                    cell.setBackgroundColor(new Color(0, 122, 204));
                     cell.setHorizontalAlignment(Element.ALIGN_CENTER);
                     table.addCell(cell);
                 });
@@ -193,7 +201,9 @@ public class SampleService {
 
         document.add(table);
 
-        document.add(new Paragraph("\nPodpis: ........................................"));
+        LabEmployee labEmployee = sample.getLabEmployee();
+        document.add(new Paragraph("\nPodpis: " + labEmployee.getFirstname() + " " + labEmployee.getLastname() +
+                " (" + labEmployee.getPosition() + ")"));
         document.add(new Paragraph("Data wydruku: " + LocalDate.now()));
 
         document.close();
