@@ -1,9 +1,6 @@
 package com.apiot.mediflow.auth;
 
-import com.apiot.mediflow.users.Doctor;
-import com.apiot.mediflow.users.LabEmployee;
-import com.apiot.mediflow.users.Patient;
-import com.apiot.mediflow.users.Role;
+import com.apiot.mediflow.users.*;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
@@ -37,6 +34,9 @@ public class User implements UserDetails {
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private LabEmployee labEmployee;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    private RegistrationEmployee registrationEmployee;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

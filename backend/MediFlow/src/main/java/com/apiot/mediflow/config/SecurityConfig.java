@@ -42,7 +42,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/samples/*/results/**").permitAll()
                         .requestMatchers("/api/samples/**").hasRole("LAB")
                         .requestMatchers("/api/appointments/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/appointments/**").hasRole("LAB")
+                        .requestMatchers(HttpMethod.GET, "/api/appointments/**").hasRole("REGISTRATION")
                         .requestMatchers("/api/referrals/**").hasRole("DOCTOR")
                         .anyRequest().authenticated()
                 )

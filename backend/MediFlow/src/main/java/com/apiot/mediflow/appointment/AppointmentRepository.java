@@ -16,4 +16,5 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
     boolean existsByCollectionPointAndDate(CollectionPoint collectionPoint, LocalDateTime date);
     List<Appointment> findAllByDateBetween(LocalDateTime start, LocalDateTime end);
     List<Appointment> findByCollectionPointIdAndDateBetween(Long collectionPointId, LocalDateTime start, LocalDateTime end);
+    List<Appointment> findByCollectionPointId(Long collectionPointId);
 }

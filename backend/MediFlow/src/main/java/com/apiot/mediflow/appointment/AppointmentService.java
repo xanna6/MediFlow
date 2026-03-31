@@ -1,15 +1,19 @@
 package com.apiot.mediflow.appointment;
 
+import com.apiot.mediflow.auth.User;
+import com.apiot.mediflow.auth.UserRepository;
 import com.apiot.mediflow.collectionPoint.CollectionPoint;
 import com.apiot.mediflow.collectionPoint.CollectionPointRepository;
 import com.apiot.mediflow.mail.EmailService;
 import com.apiot.mediflow.referral.Referral;
 import com.apiot.mediflow.referral.ReferralRepository;
-import com.apiot.mediflow.users.Patient;
-import com.apiot.mediflow.users.PatientRepository;
+import com.apiot.mediflow.users.*;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -26,15 +30,17 @@ public class AppointmentService {
     private final ReferralRepository referralRepository;
     private final CollectionPointRepository collectionPointRepository;
     private final PatientRepository patientRepository;
+    private final UserRepository userRepository;
     private final EmailService emailService;
 
     public AppointmentService(AppointmentRepository appointmentRepository, ReferralRepository referralRepository,
                               CollectionPointRepository collectionPointRepository, PatientRepository patientRepository,
-                              EmailService emailService) {
+                              UserRepository userRepository, EmailService emailService) {
         this.appointmentRepository = appointmentRepository;
         this.referralRepository = referralRepository;
         this.collectionPointRepository = collectionPointRepository;
         this.patientRepository = patientRepository;
+        this.userRepository = userRepository;
         this.emailService = emailService;
     }
 
@@ -78,8 +84,10 @@ public class AppointmentService {
     }
 
     protected List<AppointmentResponseDto> getAppointments() {
-        //TODO: return a list of appointments depending on the user's role
-        return appointmentRepository.findAll()
+
+        CollectionPoint collectionPoint = getCollectionPointForCurrentUser();
+
+        return appointmentRepository.findByCollectionPointId(collectionPoint.getId())
                 .stream()
                 .map(this::mapAppointmentToAppointmentResponseDto)
                 .collect(Collectors.toList());
@@ -89,7 +97,9 @@ public class AppointmentService {
         LocalDateTime startOfDay = day.atStartOfDay();
         LocalDateTime endOfDay = day.plusDays(1).atStartOfDay();
 
-        return appointmentRepository.findAllByDateBetween(startOfDay, endOfDay)
+        CollectionPoint collectionPoint = getCollectionPointForCurrentUser();
+
+        return appointmentRepository.findByCollectionPointIdAndDateBetween(collectionPoint.getId(), startOfDay, endOfDay)
                 .stream()
                 .map(this::mapAppointmentToAppointmentResponseDto)
                 .collect(Collectors.toList());
@@ -117,6 +127,31 @@ public class AppointmentService {
         }
 
         return new AvailableSlotsResponse(pointId, date.toString(), available);
+    }
+
+    private CollectionPoint getCollectionPointForCurrentUser() {
+        String username =
+                SecurityContextHolder
+                        .getContext()
+                        .getAuthentication()
+                        .getName();
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow();
+
+        RegistrationEmployee employee = user.getRegistrationEmployee();
+
+        if (employee == null) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        }
+
+        CollectionPoint collectionPoint = user.getRegistrationEmployee().getCollectionPoint();
+
+        if (collectionPoint == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Registration employee is not assigned to any collection point");
+        }
+
+        return collectionPoint;
     }
 
     private AppointmentResponseDto mapAppointmentToAppointmentResponseDto(Appointment appointment) {

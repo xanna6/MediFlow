@@ -71,18 +71,6 @@ public class SampleService {
         appointment.setStatus(AppointmentStatus.CONFIRMED);
         sample.setAppointment(appointment);
 
-        String username =
-                SecurityContextHolder
-                        .getContext()
-                        .getAuthentication()
-                        .getName();
-
-        User user =  userRepository.findByUsername(username)
-                .orElseThrow();
-
-        LabEmployee labEmployee = user.getLabEmployee();
-        sample.setLabEmployee(labEmployee);
-
         Sample savedSample = sampleRepository.save(sample);
 
         return mapSampleToSampleDto(savedSample);
@@ -124,6 +112,18 @@ public class SampleService {
                 st.setResultDate(LocalDateTime.now());
             }
         }
+
+        String username =
+                SecurityContextHolder
+                        .getContext()
+                        .getAuthentication()
+                        .getName();
+
+        User user =  userRepository.findByUsername(username)
+                .orElseThrow();
+
+        LabEmployee labEmployee = user.getLabEmployee();
+        sample.setLabEmployee(labEmployee);
 
         updateSampleStatus(sample);
         Sample updatedSample = sampleRepository.save(sample);

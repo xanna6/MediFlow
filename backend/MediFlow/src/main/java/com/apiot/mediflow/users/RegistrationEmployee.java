@@ -1,20 +1,18 @@
 package com.apiot.mediflow.users;
 
 import com.apiot.mediflow.auth.User;
-import com.apiot.mediflow.sample.Sample;
+import com.apiot.mediflow.collectionPoint.CollectionPoint;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Entity
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-public class LabEmployee {
+@AllArgsConstructor
+public class RegistrationEmployee {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,4 +25,9 @@ public class LabEmployee {
     @JsonIgnore
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    @OneToOne
+    @JsonIgnore
+    @JoinColumn(name = "collection_point_id")
+    private CollectionPoint collectionPoint;
 }
