@@ -19,7 +19,7 @@ function App() {
                     <Referrals />
                 </RoleRoute>} />
                 <Route path="/make-appointment" element={<CollectionPoints />} />
-                <Route path="/appointments" element={<RoleRoute roles={["ROLE_LAB"]}>
+                <Route path="/appointments" element={<RoleRoute roles={["ROLE_REGISTRATION"]}>
                     <Appointments />
                 </RoleRoute>} />
                 <Route path="/samples" element={ <RoleRoute roles={["ROLE_LAB"]}>

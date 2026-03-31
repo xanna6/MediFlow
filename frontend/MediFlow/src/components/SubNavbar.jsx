@@ -45,21 +45,22 @@ export default function SubNavbar() {
                         </li>
                     )}
 
-                    {hasRole("ROLE_LAB") && (
-                        <>
+                    {hasRole("ROLE_REGISTRATION") && (
                             <li>
                                 <NavLink to="/appointments"
                                          className={({ isActive }) => isActive ? "active" : ""}>
                                     Wizyty
                                 </NavLink>
                             </li>
+                    )}
+
+                    {hasRole("ROLE_LAB") && (
                             <li>
                                 <NavLink to="/samples"
                                          className={({ isActive }) => isActive ? "active" : ""}>
                                     Próbki
                                 </NavLink>
                             </li>
-                        </>
                     )}
                 </ul>
             </nav>

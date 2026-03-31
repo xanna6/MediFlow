@@ -12,6 +12,8 @@ export default function Appointments() {
 
     const token = localStorage.getItem("token");
 
+    console.log("Appointments mounted");
+
     const fetchAppointments = async (date) => {
         try {
             setLoading(true);
