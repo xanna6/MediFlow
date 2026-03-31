@@ -10,6 +10,7 @@ import com.apiot.mediflow.referral.ReferralCreateDto;
 import com.apiot.mediflow.referral.ReferralDto;
 import com.apiot.mediflow.referral.ReferralService;
 import com.apiot.mediflow.test.MedicalTestDto;
+import com.apiot.mediflow.users.PatientDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -27,6 +28,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
@@ -74,7 +76,7 @@ public class ReferralControllerTests {
     void shouldReturnListOfReferralsAsJson() throws Exception {
         // given
         Set<MedicalTestDto> medicalTestDtos = Set.of(
-                new MedicalTestDto(1L, "TSH", "Badanie funkcji tarczycy", 45.99F));
+                new MedicalTestDto(1L, "TSH"));
         List<ReferralDto> referralDtoList = List.of(
                 new ReferralDto(1L, "Jan", "Kowalski", "Kardiolog",
                         "A25000001", LocalDateTime.now(), medicalTestDtos),
@@ -109,8 +111,8 @@ public class ReferralControllerTests {
     void shouldReturnReferralDtoById() throws Exception {
         //given
         Set<MedicalTestDto> medicalTestDtos = Set.of(
-                new MedicalTestDto(1L, "TSH", "Badanie funkcji tarczycy", 45.99F),
-                new MedicalTestDto(2L, "Glukoza", "Badanie poziomu glukozy na czczo", 19.99F));
+                new MedicalTestDto(1L, "TSH"),
+                new MedicalTestDto(2L, "Glukoza"));
         ReferralDto referralDto = new ReferralDto(1L, "Jan", "Kowalski",
                 "Internista", "A25000001", LocalDateTime.now(), medicalTestDtos);
 
@@ -142,10 +144,10 @@ public class ReferralControllerTests {
     void shouldCreateReferralAndReturn201() throws Exception {
         // given
         Set<MedicalTestDto> medicalTestDtos = Set.of(
-                new MedicalTestDto(1L, "TSH", "Badanie funkcji tarczycy", 45.99F),
-                new MedicalTestDto(2L, "Glukoza", "Badanie poziomu glukozy na czczo", 19.99F));
+                new MedicalTestDto(1L, "TSH"),
+                new MedicalTestDto(2L, "Glukoza"));
 
-        ReferralCreateDto referralCreateDto = new ReferralCreateDto(1L,1L, Set.of(1L, 2L));
+        ReferralCreateDto referralCreateDto = new ReferralCreateDto(new PatientDto( "Julia", "Kozłowska", "76012558545", LocalDate.of(1976, 1, 25)), Set.of(1L, 2L));
         ReferralDto savedReferral = new ReferralDto(5L, "Jan", "Kowalski",
                 "Internista", "A25000003", LocalDateTime.now(), medicalTestDtos);
 

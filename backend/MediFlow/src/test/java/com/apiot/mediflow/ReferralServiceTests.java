@@ -46,8 +46,8 @@ public class ReferralServiceTests {
                 referralNumberGenerator);
 
         medicalTests = Set.of(
-                new MedicalTest(1L, "TSH", "Badanie funkcji tarczycy", 45.99F, "mIU/l", "0.4 - 4.0"),
-                new MedicalTest(2L, "Glukoza", "Badanie poziomu glukozy na czczo", 19.99F, "mg/dl", "70 - 99"));
+                new MedicalTest(1L, "TSH", "Badanie funkcji tarczycy", "mIU/l", "0.4 - 4.0"),
+                new MedicalTest(2L, "Glukoza", "Badanie poziomu glukozy na czczo", "mg/dl", "70 - 99"));
 
         doctor = new Doctor(1L, "Jan", "Kowalski", "Kardiolog");
 

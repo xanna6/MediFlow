@@ -21,7 +21,6 @@ public class MedicalTest {
     private Long id;
     private String name;
     private String description;
-    private float cost;
     private String unit;
     private String standard;
 
@@ -33,11 +32,10 @@ public class MedicalTest {
     @ToString.Exclude
     private Set<Referral> referrals;
 
-    public MedicalTest(Long id, String name, String description, float cost, String unit, String standard) {
+    public MedicalTest(Long id, String name, String description, String unit, String standard) {
         this.id = id;
         this.name = name;
         this.description = description;
-        this.cost = cost;
         this.unit = unit;
         this.standard = standard;
     }
