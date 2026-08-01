@@ -40,6 +40,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/collection-points/**").permitAll()
                         .requestMatchers("/api/samples/by-code").permitAll()
                         .requestMatchers("/api/samples/*/results/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/samples/**").hasRole("REGISTRATION")
                         .requestMatchers("/api/samples/**").hasRole("LAB")
                         .requestMatchers("/api/appointments/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/appointments/**").hasRole("REGISTRATION")
