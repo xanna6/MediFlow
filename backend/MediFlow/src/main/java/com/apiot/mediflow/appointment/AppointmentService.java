@@ -87,7 +87,7 @@ public class AppointmentService {
 
         CollectionPoint collectionPoint = getCollectionPointForCurrentUser();
 
-        return appointmentRepository.findByCollectionPointId(collectionPoint.getId())
+        return appointmentRepository.findByCollectionPointIdOrderByDateAsc(collectionPoint.getId())
                 .stream()
                 .map(this::mapAppointmentToAppointmentResponseDto)
                 .collect(Collectors.toList());
@@ -99,7 +99,7 @@ public class AppointmentService {
 
         CollectionPoint collectionPoint = getCollectionPointForCurrentUser();
 
-        return appointmentRepository.findByCollectionPointIdAndDateBetween(collectionPoint.getId(), startOfDay, endOfDay)
+        return appointmentRepository.findByCollectionPointIdAndDateBetweenOrderByDateAsc(collectionPoint.getId(), startOfDay, endOfDay)
                 .stream()
                 .map(this::mapAppointmentToAppointmentResponseDto)
                 .collect(Collectors.toList());
@@ -112,7 +112,7 @@ public class AppointmentService {
         LocalDateTime startOfDay = date.atStartOfDay();
         LocalDateTime endOfDay = date.atTime(LocalTime.MAX);
 
-        List<Appointment> takenAppointments = appointmentRepository.findByCollectionPointIdAndDateBetween(pointId, startOfDay, endOfDay);
+        List<Appointment> takenAppointments = appointmentRepository.findByCollectionPointIdAndDateBetweenOrderByDateAsc(pointId, startOfDay, endOfDay);
         Set<LocalTime> takenTimes = takenAppointments.stream()
                 .map(appointment -> appointment.getDate().toLocalTime())
                 .collect(Collectors.toSet());
