@@ -56,6 +56,13 @@ public class Referral {
         this.medicalTests = medicalTests;
     }
 
+    public Referral(String referralNumber, Doctor doctor, Patient patient, Set<MedicalTest> medicalTests) {
+        this.referralNumber = referralNumber;
+        this.doctor = doctor;
+        this.patient = patient;
+        this.medicalTests = medicalTests;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

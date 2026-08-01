@@ -6,7 +6,6 @@ import com.apiot.mediflow.referralNumberGenerator.ReferralNumberGenerator;
 import com.apiot.mediflow.test.MedicalTest;
 import com.apiot.mediflow.test.MedicalTestRepository;
 import com.apiot.mediflow.users.Doctor;
-import com.apiot.mediflow.users.DoctorRepository;
 import com.apiot.mediflow.users.Patient;
 import com.apiot.mediflow.users.PatientRepository;
 import jakarta.persistence.EntityNotFoundException;
