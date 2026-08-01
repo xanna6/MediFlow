@@ -2,6 +2,7 @@ package com.apiot.mediflow;
 
 import com.apiot.mediflow.auth.JwtService;
 import com.apiot.mediflow.auth.User;
+import com.apiot.mediflow.users.Role;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -29,6 +30,7 @@ class JwtServiceTest {
     void shouldGenerateAndValidateToken() {
         User user = new User();
         user.setUsername("john");
+        user.setRole(Role.LAB);
 
         String token = jwtService.generateToken(user);
 
@@ -43,6 +45,7 @@ class JwtServiceTest {
 
         User user = new User();
         user.setUsername("john");
+        user.setRole(Role.LAB);
 
         String token = jwtService.generateToken(user);
 

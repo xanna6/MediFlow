@@ -170,9 +170,12 @@ public class ReferralControllerTests {
     void shouldReturnBadRequestWhenValidationFails() throws Exception {
         String invalidRequest = """
             {
-                "patientId": null,
-                "doctorId": null,
-                "referralNumber": "",
+                "patientDto": {
+                    "firstName": null,
+                    "lastName": "",
+                    "pesel": " ",
+                    "birthDate": null
+                    },
                 "medicalTestIds": []
             }
         """;
@@ -183,9 +186,10 @@ public class ReferralControllerTests {
                         .content(invalidRequest))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.errors").exists())
-                .andExpect(jsonPath("$.errors.doctorId").value("must not be null"))
-                .andExpect(jsonPath("$.errors.patientId").value("must not be null"))
-                .andExpect(jsonPath("$.errors.referralNumber").value("must not be blank"))
+                .andExpect(jsonPath("$.errors['patientDto.firstName']").value("must not be blank"))
+                .andExpect(jsonPath("$.errors['patientDto.lastName']").value("must not be blank"))
+                .andExpect(jsonPath("$.errors['patientDto.pesel']").value("must not be blank"))
+                .andExpect(jsonPath("$.errors['patientDto.birthDate']").value("must not be null"))
                 .andExpect(jsonPath("$.errors.medicalTestIds").value("must not be empty"));;
     }
 
